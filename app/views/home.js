@@ -1,47 +1,62 @@
-import React, { Component } from 'react';
-import Api from '../helpers/api';
+import React, { useState, useEffect } from "react";
+import Api from "../helpers/api";
+import { Button, Card, Dropdown } from "react-bootstrap";
 
-class Home extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { name: 'Bob' };
-        this.handleInput = this.handleInput.bind(this);
-        this.handleSearch = this.handleSearch.bind(this);
-    }
+const Home = () => {
+  const [name, setName] = useState("Bob");
 
-    componentDidMount() {
-        // Do something when loaded
-    }
+  useEffect(() => {
+    // Do something when loaded
+  }, []);
 
-    handleInput(e) {
-        this.setState({ name: e.target.value });
-    }
+  const handleInput = (e) => {
+    setName(e.target.value);
+  };
 
-    handleSearch(e) {
-        e.preventDefault();
-        this.setState({ name: e.target.value });
-        Api.getThing().then(data => {
-            console.log(data);
-        });
-    }
+  const handleSearch = (e) => {
+    e.preventDefault();
+    Api.getThing().then((data) => {
+      console.log(data);
+    });
+  };
 
-    render() {
-        const { name } = this.state;
+  return (
+    <div className="container text-center">
+      <h2>Name: {name}</h2>
 
-        return (
-            <div className="container text-center">
-                <h2>Name: {name}</h2>
+      <form className="search" onSubmit={handleSearch}>
+        <input onChange={handleInput} type="search" placeholder="Search" />
+        <Button type="submit" className="btn">
+          Search
+        </Button>
+      </form>
 
-                <form className="search" onSubmit={this.handleSearch}>
-                    <input onChange={this.handleInput} type="search" placeholder="Search" />
-                    <button type="submit" className="btn">Search</button>
-                </form>
+      <Card className="mt-3">
+        <Card.Body>
+          <Card.Title>Welcome to Home</Card.Title>
+          <Card.Text>
+            This is a simple card component using React Bootstrap.
+          </Card.Text>
+        </Card.Body>
+      </Card>
 
-                <div className="bg-test" />
-                <img src="assets/apple-icon.png" width="100" alt="Black box" />
-            </div>
-        );
-    }
-}
+      <Dropdown className="mt-3">
+        <Dropdown.Toggle variant="success" id="dropdown-basic">
+          Pilih Opsi
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item href="#/action-1">Opsi 1</Dropdown.Item>
+          <Dropdown.Item href="#/action-2">Opsi 2</Dropdown.Item>
+          <Dropdown.Item href="#/action-3">Opsi 3</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+
+      <div className="bg-test" />
+      <img src="assets/apple-icon.png" width="100" alt="Black box" />
+      <h1>tessssss woooooiiiiii</h1>
+    </div>
+  );
+};
 
 export default Home;
