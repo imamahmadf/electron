@@ -3,7 +3,11 @@ const logger = require("morgan");
 const path = require("path");
 const bodyParser = require("body-parser");
 
-const { userRouters, suratRouters } = require("./server/routers");
+const {
+  userRouters,
+  suratRouters,
+  pegawaiRouters,
+} = require("./server/routers");
 
 const app = express();
 app.use(bodyParser.json());
@@ -17,5 +21,6 @@ app.get("/test", (req, res) => {
 
 app.use("/user", userRouters);
 app.use("/exel", suratRouters);
+app.use("/pegawai", pegawaiRouters);
 
 app.listen(5000, () => console.log("App running on port 5000 🔥"));
