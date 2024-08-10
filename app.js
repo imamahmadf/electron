@@ -7,6 +7,7 @@ const {
   userRouters,
   suratRouters,
   pegawaiRouters,
+  puskesmasRouters,
 } = require("./server/routers");
 
 const app = express();
@@ -22,5 +23,6 @@ app.get("/test", (req, res) => {
 app.use("/user", userRouters);
 app.use("/exel", suratRouters);
 app.use("/pegawai", pegawaiRouters);
+app.use("/puskesmas", puskesmasRouters);
 
 app.listen(5000, () => console.log("App running on port 5000 🔥"));

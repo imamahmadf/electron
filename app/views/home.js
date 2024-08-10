@@ -1,29 +1,75 @@
 import React, { useState, useEffect } from "react";
 import Api from "../helpers/api";
-import { Button, Card, Dropdown, Table, ListGroup } from "react-bootstrap";
+import AsyncSelect from "react-select/async";
+import { Card, Table, Button } from "react-bootstrap";
 
 const Home = () => {
-  const [pegawai1, setPegawai1] = useState("");
-  const [pegawai2, setPegawai2] = useState("");
-  const [pegawai3, setPegawai3] = useState("");
-  const [puskesmas, setPuskesmas] = useState("");
+  const [pegawaiList, setPegawaiList] = useState([]);
+  const [puskesmas, setPuskesmas] = useState(null);
   const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState("");
   const [tanggalPulang, setTanggalPulang] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => {
-    // Fetch pegawai data when component mounts
-    const fetchPegawai = async () => {
-      const response = await Api.getPegawai();
-      setSuggestions(response.data); // Simpan data pegawai
-    };
-    fetchPegawai();
-  }, []);
-
-  const filterSuggestions = (input) => {
-    return suggestions.filter((pegawai) =>
-      pegawai.nama.toLowerCase().includes(input.toLowerCase())
+  const loadPegawaiOptions = async (inputValue) => {
+    const response = await Api.getPegawai(); // Ambil data pegawai dari API
+    const filteredOptions = response.data.filter((pegawai) =>
+      pegawai.nama.toLowerCase().includes(inputValue.toLowerCase())
     );
+
+    return filteredOptions.map((pegawai) => ({
+      value: pegawai.id,
+      label: pegawai.nama,
+      jabatan: pegawai.jabatan, // Asumsi ada field jabatan
+      golongan: pegawai.golongan,
+      NIP: pegawai.NIP, // Asumsi ada field golongan
+    }));
+  };
+
+  const loadPuskesmasOptions = async (inputValue) => {
+    const response = await Api.getPuskesmas(); // Ambil data puskesmas dari API
+    const filteredOptions = response.data.filter((puskesmas) =>
+      puskesmas.nama.toLowerCase().includes(inputValue.toLowerCase())
+    );
+
+    return filteredOptions.map((puskesmas) => ({
+      value: puskesmas.id, // Asumsi ada field id
+      label: puskesmas.nama,
+    }));
+  };
+
+  const handleSelectPegawai = (selectedOption, pegawaiIndex) => {
+    if (selectedOption) {
+      const newPegawaiList = [...pegawaiList];
+      newPegawaiList[pegawaiIndex] = selectedOption; // Simpan pegawai yang dipilih
+      setPegawaiList(newPegawaiList);
+    }
+  };
+
+  const handleTanggalKeberangkatanChange = (e) => {
+    const selectedDate = e.target.value;
+    setTanggalKeberangkatan(selectedDate);
+    setTanggalPulang(selectedDate); // Set tanggal pulang sama dengan tanggal keberangkatan
+  };
+
+  const handleSubmit = async () => {
+    console.log(dataToSend);
+    const dataToSend = {
+      pegawai1: pegawaiList[0],
+      pegawai2: pegawaiList[1],
+      pegawai3: pegawaiList[2],
+      puskesmas: puskesmas,
+      keberangkatan: tanggalKeberangkatan,
+      pulang: tanggalPulang,
+    };
+
+    try {
+      console.log(dataToSend);
+      const response = await Api.buatSurat(dataToSend); // Ganti dengan API yang sesuai
+      console.log("Data berhasil dikirim:", response.data);
+      // Tambahkan logika untuk menangani respons jika diperlukan
+    } catch (error) {
+      console.error("Error mengirim data:", error);
+      // Tambahkan logika untuk menangani error jika diperlukan
+    }
   };
 
   return (
@@ -33,75 +79,60 @@ const Home = () => {
       <div className="row">
         <div className="col">
           <label>Pegawai 1</label>
-          <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              {pegawai1 || "Cari Pegawai 1"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {filterSuggestions(pegawai1).map((pegawai) => (
-                <Dropdown.Item
-                  key={pegawai.nip}
-                  onClick={() => setPegawai1(pegawai.nama)}
-                >
-                  {pegawai.nama}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          <AsyncSelect
+            cacheOptions
+            loadOptions={loadPegawaiOptions}
+            defaultOptions
+            onChange={(selectedOption) =>
+              handleSelectPegawai(selectedOption, 0)
+            } // Pegawai 1
+            placeholder="Cari Pegawai 1"
+          />
         </div>
         <div className="col">
           <label>Pegawai 2</label>
-          <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              {pegawai2 || "Cari Pegawai 2"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {filterSuggestions(pegawai2).map((pegawai) => (
-                <Dropdown.Item
-                  key={pegawai.nip}
-                  onClick={() => setPegawai2(pegawai.nama)}
-                >
-                  {pegawai.nama}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          <AsyncSelect
+            cacheOptions
+            loadOptions={loadPegawaiOptions}
+            defaultOptions
+            onChange={(selectedOption) =>
+              handleSelectPegawai(selectedOption, 1)
+            } // Pegawai 2
+            placeholder="Cari Pegawai 2"
+          />
         </div>
         <div className="col">
           <label>Pegawai 3</label>
-          <Dropdown>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              {pegawai3 || "Cari Pegawai 3"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {filterSuggestions(pegawai3).map((pegawai) => (
-                <Dropdown.Item
-                  key={pegawai.nip}
-                  onClick={() => setPegawai3(pegawai.nama)}
-                >
-                  {pegawai.nama}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          <AsyncSelect
+            cacheOptions
+            loadOptions={loadPegawaiOptions}
+            defaultOptions
+            onChange={(selectedOption) =>
+              handleSelectPegawai(selectedOption, 2)
+            } // Pegawai 3
+            placeholder="Cari Pegawai 3"
+          />
         </div>
       </div>
 
-      {/* Kolom Pencarian untuk Puskesmas dan Tanggal */}
+      {/* Kolom Pencarian untuk Puskesmas */}
       <div className="row mt-3">
         <div className="col">
           <label>Nama Puskesmas</label>
-          <input
-            onChange={(e) => setPuskesmas(e.target.value)}
-            type="search"
+          <AsyncSelect
+            cacheOptions
+            loadOptions={loadPuskesmasOptions}
+            defaultOptions
+            onChange={setPuskesmas} // Simpan puskesmas yang dipilih
             placeholder="Cari Puskesmas"
           />
         </div>
         <div className="col">
           <label>Tanggal Keberangkatan</label>
           <input
-            onChange={(e) => setTanggalKeberangkatan(e.target.value)}
+            onChange={handleTanggalKeberangkatanChange}
             type="date"
+            value={tanggalKeberangkatan}
           />
         </div>
         <div className="col">
@@ -109,9 +140,14 @@ const Home = () => {
           <input
             onChange={(e) => setTanggalPulang(e.target.value)}
             type="date"
+            value={tanggalPulang}
           />
         </div>
       </div>
+
+      <Button className="mt-3" onClick={handleSubmit}>
+        Buat
+      </Button>
 
       <Card className="mt-3">
         <Card.Body>
@@ -125,14 +161,21 @@ const Home = () => {
                 <th>NIP</th>
               </tr>
             </thead>
-            <tbody>{/* Data pegawai akan ditampilkan di sini */}</tbody>
+            <tbody>
+              {pegawaiList.map((pegawai, index) => (
+                <tr key={index}>
+                  <td>{pegawai.label}</td>
+                  <td>{pegawai.jabatan}</td>
+                  <td>{pegawai.golongan}</td>
+                  <td>{pegawai.NIP}</td>
+                </tr>
+              ))}
+            </tbody>
           </Table>
         </Card.Body>
       </Card>
 
-      <div className="bg-test" />
-      <img src="assets/apple-icon.png" width="100" alt="Black box" />
-      <h1>tessssss woooooiiiiii</h1>
+      {/* ... existing code ... */}
     </div>
   );
 };

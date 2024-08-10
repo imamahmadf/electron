@@ -1,8 +1,8 @@
 const { db } = require("../database");
 
 module.exports = {
-  getAll: (req, res) => {
-    let sqlGet = `SELECT id, nama, jabatan, NIP, golongan FROM pegawais`;
+  getAllPuskesmas: (req, res) => {
+    let sqlGet = `SELECT id, nama FROM puskesmas`;
 
     db.query(sqlGet, (err, results) => {
       if (err) {
