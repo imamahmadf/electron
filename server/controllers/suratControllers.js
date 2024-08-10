@@ -11,7 +11,7 @@ module.exports = {
         req.body; // Mengambil data pegawai
 
       console.log("Data yang diterima:", req.body); // Log data yang diterima
-      console.log("aaaaaaaaaaaaaaaaaaaaa", req.body.keberangkatan);
+
       // Validasi data
       if (!pegawai1 || !pegawai2 || !pegawai3) {
         return res.status(400).send("Data pegawai tidak lengkap.");
@@ -141,5 +141,41 @@ module.exports = {
       console.error("Error handling post request:", error);
       res.status(500).send("Terjadi kesalahan saat menangani permintaan.");
     }
+  },
+  getAllSurat: (req, res) => {
+    const sql = `SELECT keberangkatans.id, keberangkatans.nomorSuratTugas, keberangkatans.keberangkatan, keberangkatans.pulang, keberangkatans.nomorSuratNotaDinas, keberangkatans.nomorSuratSPD, 
+JSON_OBJECT('id', pegawai1.id, 'nama', pegawai1.nama, 'NIP', pegawai1.NIP, 'jabatan', pegawai1.jabatan, 'golongan', pegawai1.golongan) AS pegawai1,
+JSON_OBJECT('id', pegawai2.id, 'nama', pegawai2.nama, 'NIP', pegawai2.NIP, 'jabatan', pegawai2.jabatan, 'golongan', pegawai2.golongan) AS pegawai2,
+JSON_OBJECT('id', pegawai3.id, 'nama', pegawai3.nama, 'NIP', pegawai3.NIP, 'jabatan', pegawai3.jabatan, 'golongan', pegawai3.golongan) AS pegawai3,
+JSON_OBJECT('id', puskesmas.id, 'nama', puskesmas.nama) AS puskesmasId
+FROM keberangkatans
+LEFT JOIN pegawais AS pegawai1 ON keberangkatans.pegawai1Id = pegawai1.id
+LEFT JOIN pegawais AS pegawai2 ON keberangkatans.pegawai2Id = pegawai2.id
+LEFT JOIN pegawais AS pegawai3 ON keberangkatans.pegawai3Id = pegawai3.id
+LEFT JOIN puskesmas ON keberangkatans.puskesmasId = puskesmas.id`;
+
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.error("Error fetching data from database:", err);
+        return res
+          .status(500)
+          .send("Terjadi kesalahan saat mengambil data dari database.");
+      }
+      res.status(200).json(result);
+    });
+  },
+  deleteSurat: (req, res) => {
+    const { id } = req.params; // Mengambil id dari URL
+
+    const sql = `DELETE FROM keberangkatans WHERE id = ?`;
+    db.query(sql, [id], (err, result) => {
+      if (err) {
+        console.error("Error deleting data from database:", err);
+        return res
+          .status(500)
+          .send("Terjadi kesalahan saat menghapus data dari database.");
+      }
+      res.status(200).send("Data berhasil dihapus dari database.");
+    });
   },
 };

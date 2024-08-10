@@ -21,7 +21,7 @@ app.get("/test", (req, res) => {
 });
 
 app.use("/user", userRouters);
-app.use("/exel", suratRouters);
+app.use("/surat", suratRouters);
 app.use("/pegawai", pegawaiRouters);
 app.use("/puskesmas", puskesmasRouters);
 
