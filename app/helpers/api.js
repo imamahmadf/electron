@@ -7,6 +7,7 @@ const Api = {
   buatSurat: (data) => Axios.post(`/surat/post`, data),
   rekapSurat: () => Axios.get(`/surat/get`),
   hapusSurat: (id) => Axios.delete(`surat/delete/${id}`),
+  printKwitansi: (data) => Axios.post(`/surat/kwitansi`, data),
 };
 
 export default Api;

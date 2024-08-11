@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Api from "../helpers/api";
-import { Card, Button, Modal } from "react-bootstrap";
+import { Card, Button, Modal, Dropdown } from "react-bootstrap";
 
 const RekapSurat = () => {
   const [data, setData] = useState([]);
@@ -8,7 +8,11 @@ const RekapSurat = () => {
   const [selectedData, setSelectedData] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const date = new Date(dateString);
+    return date.toLocaleDateString("id-ID", options);
+  };
   const handleModal = (item) => {
     setSelectedData(item);
     setShowModal(true);
@@ -29,6 +33,28 @@ const RekapSurat = () => {
     }
   };
 
+  const printKwitansi = async (selectedData) => {
+    try {
+      const dataToSend = {
+        nomorSuratSPD: selectedData.nomorSuratSPD,
+        pegawai1Nama: JSON.parse(selectedData.pegawai1).nama,
+        pegawai1NIP: JSON.parse(selectedData.pegawai1).NIP,
+        pegawai2Nama: JSON.parse(selectedData.pegawai2).nama,
+        pegawai2NIP: JSON.parse(selectedData.pegawai2).NIP,
+        pegawai3Nama: JSON.parse(selectedData.pegawai3).nama,
+        pegawai3NIP: JSON.parse(selectedData.pegawai3).NIP,
+      };
+
+      // Send data to the backend API for printing kwitansi
+      await Api.printKwitansi(dataToSend);
+
+      // Optionally show a success message or perform any other actions
+      console.log("Kwitansi printed successfully!");
+    } catch (error) {
+      console.error("Error printing kwitansi: ", error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,16 +71,35 @@ const RekapSurat = () => {
   return (
     <div>
       {data.map((item) => (
-        <Card key={item.id} style={{ width: "100%", marginBottom: "10px" }}>
+        <Card
+          key={item.id}
+          style={{ width: "100%", marginBottom: "10px", position: "relative" }}
+        >
           <Card.Body>
             <Card.Title>{JSON.parse(item.puskesmasId).nama}</Card.Title>
-            <Card.Text>Keberangkatan: {item.keberangkatan}</Card.Text>
-            <Button variant="primary" onClick={() => handleModal(item)}>
-              Detail
-            </Button>
-            <Button variant="danger" onClick={() => handleDelete(item.id)}>
-              Hapus
-            </Button>
+            <Card.Text>
+              Keberangkatan: {formatDate(item.keberangkatan)}
+            </Card.Text>
+
+            <Dropdown
+              style={{ position: "absolute", top: "10px", right: "10px" }}
+            >
+              <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                <i className="fas fa-ellipsis-v"></i>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleModal(item)}>
+                  Detail
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => handleDelete(item.id)}>
+                  Hapus
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => printKwitansi(item)}>
+                  Print Kwitansi
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </Card.Body>
         </Card>
       ))}

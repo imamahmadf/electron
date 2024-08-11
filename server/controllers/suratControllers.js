@@ -152,7 +152,8 @@ FROM keberangkatans
 LEFT JOIN pegawais AS pegawai1 ON keberangkatans.pegawai1Id = pegawai1.id
 LEFT JOIN pegawais AS pegawai2 ON keberangkatans.pegawai2Id = pegawai2.id
 LEFT JOIN pegawais AS pegawai3 ON keberangkatans.pegawai3Id = pegawai3.id
-LEFT JOIN puskesmas ON keberangkatans.puskesmasId = puskesmas.id`;
+LEFT JOIN puskesmas ON keberangkatans.puskesmasId = puskesmas.id
+ORDER BY keberangkatans.keberangkatan ASC`;
 
     db.query(sql, (err, result) => {
       if (err) {
@@ -177,5 +178,51 @@ LEFT JOIN puskesmas ON keberangkatans.puskesmasId = puskesmas.id`;
       }
       res.status(200).send("Data berhasil dihapus dari database.");
     });
+  },
+  printKwitansi: async (req, res) => {
+    const {
+      nomorSuratSPD,
+      pegawai1Nama,
+      pegawai1NIP,
+      pegawai2Nama,
+      pegawai2NIP,
+      pegawai3Nama,
+      pegawai3NIP,
+    } = req.body;
+
+    try {
+      const sourceFilePath = path.join(
+        __dirname,
+        "..",
+        "assets",
+        "KWITANSI.xlsx"
+      );
+
+      console.log("File path:", sourceFilePath); // Log file path
+      const downloadPath = app.getPath("downloads");
+      const newFileName = `KWITANSI${Date.now()}.xlsx`;
+      const newFilePath = path.join(downloadPath, newFileName);
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(sourceFilePath);
+
+      const worksheet = workbook.getWorksheet("1. Rincian BPD");
+      if (!worksheet) {
+        throw new Error("Worksheet 'SURTUG' tidak ditemukan.");
+      }
+
+      worksheet.getCell("F5").value = nomorSuratSPD;
+      worksheet.getCell("AA1").value = pegawai1Nama;
+      worksheet.getCell("AA2").value = pegawai1NIP;
+      worksheet.getCell("AA3").value = pegawai2Nama;
+      worksheet.getCell("AA4").value = pegawai2NIP;
+      worksheet.getCell("AA5").value = pegawai3Nama;
+      worksheet.getCell("AA6").value = pegawai3NIP;
+
+      // Simpan perubahan ke file baru
+      await workbook.xlsx.writeFile(newFilePath);
+    } catch (error) {
+      console.error("Error handling post request:", error);
+      res.status(500).send("Terjadi kesalahan saat menangani permintaan.");
+    }
   },
 };

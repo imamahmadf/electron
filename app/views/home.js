@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Api from "../helpers/api";
 import AsyncSelect from "react-select/async";
-import { Card, Table, Button } from "react-bootstrap";
+import { Card, Table, Button, Modal } from "react-bootstrap";
 
 const Home = () => {
   const [pegawaiList, setPegawaiList] = useState([]);
   const [puskesmas, setPuskesmas] = useState(null);
   const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState("");
   const [tanggalPulang, setTanggalPulang] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const loadPegawaiOptions = async (inputValue) => {
     const response = await Api.getPegawai(); // Ambil data pegawai dari API
@@ -65,7 +66,7 @@ const Home = () => {
       console.log(dataToSend);
       const response = await Api.buatSurat(dataToSend); // Ganti dengan API yang sesuai
       console.log("Data berhasil dikirim:", response.data);
-      // Tambahkan logika untuk menangani respons jika diperlukan
+      setShowModal(true); // Tampilkan modal setelah berhasil mengirim data
     } catch (error) {
       console.error("Error mengirim data:", error);
       // Tambahkan logika untuk menangani error jika diperlukan
@@ -149,6 +150,21 @@ const Home = () => {
         Buat
       </Button>
 
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Informasi</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          File SPPD berhasil dibuat, silahkan periksa folder download yang ada
+          di komputer anda.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Tutup
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Card className="mt-3">
         <Card.Body>
           <Card.Title>Pegawai Distribusi</Card.Title>
@@ -174,6 +190,8 @@ const Home = () => {
           </Table>
         </Card.Body>
       </Card>
+
+      {/* ... existing code ... */}
 
       {/* ... existing code ... */}
     </div>

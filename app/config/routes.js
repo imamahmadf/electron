@@ -6,6 +6,7 @@ import Footer from "../components/footer";
 import Home from "../views/home";
 import About from "../views/about";
 import Rekap from "../views/rekap";
+import Pengaturan from "../views/pengaturan";
 import "../styles/main.css";
 
 const history = createBrowserHistory();
@@ -17,6 +18,7 @@ const Routes = (
       <Route path="/" exact component={Home} />
       <Route path="/about" component={About} />
       <Route path="/rekap" component={Rekap} />
+      <Route path="/pengaturan" component={Pengaturan} />
       <Footer />
     </div>
   </Router>
