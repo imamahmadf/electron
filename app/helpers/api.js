@@ -8,6 +8,7 @@ const Api = {
   rekapSurat: () => Axios.get(`/surat/get`),
   hapusSurat: (id) => Axios.delete(`surat/delete/${id}`),
   printKwitansi: (data) => Axios.post(`/surat/kwitansi`, data),
+  hapusPegawai: (id) => Axios.post(`pegawai/delete/${id}`),
 };
 
 export default Api;
