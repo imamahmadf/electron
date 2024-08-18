@@ -25,4 +25,17 @@ module.exports = {
         .send(`Pegawai with ID: ${id} has been deleted successfully.`);
     });
   },
+
+  addPegawai: (req, res) => {
+    const { nama, NIP, golongan, jabatan } = req.body;
+    console.log(req.body);
+    let sqlAdd = `INSERT INTO pegawais (nama, NIP, golongan, jabatan) VALUES (?, ?, ?, ?)`;
+    db.query(sqlAdd, [nama, NIP, golongan, jabatan], (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("terjadi kesalahan");
+      }
+      res.status(200).send("Data pegawai berhasil ditambahakan ke database");
+    });
+  },
 };

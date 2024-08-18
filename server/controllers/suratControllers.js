@@ -7,8 +7,16 @@ const { format, parseISO } = require("date-fns");
 module.exports = {
   handlePost: async (req, res) => {
     try {
-      const { pegawai1, pegawai2, pegawai3, keberangkatan, pulang, puskesmas } =
-        req.body; // Mengambil data pegawai
+      const {
+        pegawai1,
+        pegawai2,
+        pegawai3,
+        pegawai4,
+        keberangkatan,
+        pulang,
+        puskesmas,
+        tipe,
+      } = req.body; // Mengambil data pegawai
 
       console.log("Data yang diterima:", req.body); // Log data yang diterima
 
@@ -21,12 +29,14 @@ module.exports = {
         __dirname,
         "..",
         "assets",
-        "DISTRIBUSI.xlsx"
+        tipe == 1 ? "DISTRIBUSI.xlsx" : "MONITORING.xlsx"
       );
 
       console.log("File path:", sourceFilePath); // Log file path
       const downloadPath = app.getPath("downloads");
-      const newFileName = `updated_coba_${Date.now()}.xlsx`;
+      const newFileName = `SPPD_${tipe == 1 ? "DISTRIBUSI" : "MONITORING"}_${
+        puskesmas.label
+      }${Date.now()}.xlsx`;
       const newFilePath = path.join(downloadPath, newFileName);
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(sourceFilePath);
@@ -36,31 +46,13 @@ module.exports = {
         throw new Error("Worksheet 'SURTUG' tidak ditemukan.");
       }
 
-      // Memasukkan data ke sel tertentu
-      worksheet.getCell("G17").value = pegawai1.label; // pegawai1 label
-      worksheet.getCell("G18").value = pegawai1.golongan; // pegawai1 golongan
-      worksheet.getCell("G19").value = pegawai1.NIP; // pegawai1 NIP
-      worksheet.getCell("G20").value = pegawai1.jabatan; // pegawai1 jabatan
+      const workSheetSPD = workbook.getWorksheet("SPD");
 
-      worksheet.getCell("G22").value = pegawai2.label; // pegawai2 label
-      worksheet.getCell("G23").value = pegawai2.golongan; // pegawai2 golongan
-      worksheet.getCell("G24").value = pegawai2.NIP; // pegawai2 NIP
-      worksheet.getCell("G25").value = pegawai2.jabatan; // pegawai2 jabatan
-
-      worksheet.getCell("G27").value = pegawai3.label; // pegawai3 label
-      worksheet.getCell("G28").value = pegawai3.golongan; // pegawai3 golongan
-      worksheet.getCell("G29").value = pegawai3.NIP; // pegawai3 NIP
-      worksheet.getCell("G30").value = pegawai3.jabatan; // pegawai3 jabatan
-
-      // Format tanggal ke format "DD MMMM YYYY"
       const formattedKeberangkatan = format(
         parseISO(keberangkatan),
         "d MMMM yyyy"
       );
       const formattedPulang = format(parseISO(pulang), "d MMMM yyyy");
-
-      worksheet.getCell("G37").value = formattedKeberangkatan; // tanggalKeberangkatan
-      worksheet.getCell("G38").value = formattedPulang; // tanggalPulang
 
       function generateNomorSurat(Keberangkatan, jenisSurat) {
         const date = new Date(keberangkatan);
@@ -71,7 +63,7 @@ module.exports = {
         let nomorSurat = "";
         switch (jenisSurat) {
           case "tugas":
-            nomorSurat = `${day}0.1/     /ST-POA/${month}/${year}`;
+            nomorSurat = `090.1/     /ST-POA/${month}/${year}`;
             break;
           case "nota dinas":
             nomorSurat = `440/      /ND-POA/${month}/${year}`;
@@ -85,18 +77,83 @@ module.exports = {
 
         return nomorSurat;
       }
+      if (tipe == 2) {
+        worksheet.getCell("G15").value = pegawai1.label; // pegawai1 label
+        worksheet.getCell("G16").value = pegawai1.golongan; // pegawai1 golongan
+        worksheet.getCell("G17").value = pegawai1.NIP; // pegawai1 NIP
+        worksheet.getCell("G18").value = pegawai1.jabatan; // pegawai1 jabatan
 
-      worksheet.getCell("E50").value = generateNomorSurat(
-        keberangkatan,
-        "tugas"
-      );
+        worksheet.getCell("G20").value = pegawai2.label; // pegawai2 label
+        worksheet.getCell("G21").value = pegawai2.golongan; // pegawai2 golongan
+        worksheet.getCell("G22").value = pegawai2.NIP; // pegawai2 NIP
+        worksheet.getCell("G23").value = pegawai2.jabatan; // pegawai2 jabatan
 
-      worksheet.getCell("E51").value = generateNomorSurat(
-        keberangkatan,
-        "nota dinas"
-      );
+        worksheet.getCell("G25").value = pegawai3.label; // pegawai3 label
+        worksheet.getCell("G26").value = pegawai3.golongan; // pegawai3 golongan
+        worksheet.getCell("G27").value = pegawai3.NIP; // pegawai3 NIP
+        worksheet.getCell("G28").value = pegawai3.jabatan; // pegawai3 jabatan
 
-      worksheet.getCell("E52").value = generateNomorSurat(keberangkatan, "SPD");
+        worksheet.getCell("G30").value = pegawai4.label; // pegawai3 label
+        worksheet.getCell("G31").value = pegawai4.golongan; // pegawai3 golongan
+        worksheet.getCell("G32").value = pegawai4.NIP; // pegawai3 NIP
+        worksheet.getCell("G33").value = pegawai4.jabatan; // pegawai3 jabatan
+
+        worksheet.getCell("G39").value = `Puskesmas ${puskesmas.label}`; // pegawai3 jabatan
+
+        worksheet.getCell("G40").value = formattedKeberangkatan; // tanggalKeberangkatan
+        // worksheet.getCell("G36").value = formattedPulang; // tanggalPulang
+
+        worksheet.getCell("G9").value = generateNomorSurat(
+          keberangkatan,
+          "tugas"
+        );
+
+        worksheet.getCell("G11").value = generateNomorSurat(
+          keberangkatan,
+          "nota dinas"
+        );
+
+        // workSheetSPD.getCell("H9").value = generateNomorSurat(
+        //   keberangkatan,
+        //   "SPD"
+        // );
+      } else {
+        worksheet.getCell("G16").value = pegawai1.label; // pegawai1 label
+        worksheet.getCell("G17").value = pegawai1.golongan; // pegawai1 golongan
+        worksheet.getCell("G18").value = pegawai1.NIP; // pegawai1 NIP
+        worksheet.getCell("G19").value = pegawai1.jabatan; // pegawai1 jabatan
+
+        worksheet.getCell("G21").value = pegawai2.label; // pegawai2 label
+        worksheet.getCell("G22").value = pegawai2.golongan; // pegawai2 golongan
+        worksheet.getCell("G23").value = pegawai2.NIP; // pegawai2 NIP
+        worksheet.getCell("G24").value = pegawai2.jabatan; // pegawai2 jabatan
+
+        worksheet.getCell("G26").value = pegawai3.label; // pegawai3 label
+        worksheet.getCell("G27").value = pegawai3.golongan; // pegawai3 golongan
+        worksheet.getCell("G28").value = pegawai3.NIP; // pegawai3 NIP
+        worksheet.getCell("G29").value = pegawai3.jabatan; // pegawai3 jabatan
+        worksheet.getCell("G41").value = `Puskesmas ${puskesmas.label}`; // pegawai3 jabatan
+        // Format tanggal ke format "DD MMMM YYYY"
+
+        worksheet.getCell("G35").value = formattedKeberangkatan; // tanggalKeberangkatan
+        worksheet.getCell("G36").value = formattedPulang; // tanggalPulang
+
+        worksheet.getCell("G9").value = generateNomorSurat(
+          keberangkatan,
+          "tugas"
+        );
+
+        worksheet.getCell("G11").value = generateNomorSurat(
+          keberangkatan,
+          "nota dinas"
+        );
+
+        workSheetSPD.getCell("H9").value = generateNomorSurat(
+          keberangkatan,
+          "SPD"
+        );
+      }
+      // Memasukkan data ke sel tertentu
 
       // Simpan perubahan ke file baru
       await workbook.xlsx.writeFile(newFilePath);
@@ -109,7 +166,7 @@ module.exports = {
       );
       const nomorSuratSPD = generateNomorSurat(keberangkatan, "SPD");
 
-      const sql = `INSERT INTO keberangkatans (nomorSuratTugas, nomorSuratNotaDinas, nomorSuratSPD, keberangkatan, pulang, pegawai1Id, pegawai2Id, pegawai3Id, puskesmasId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const sql = `INSERT INTO keberangkatans (nomorSuratTugas, nomorSuratNotaDinas, nomorSuratSPD, keberangkatan, pulang, pegawai1Id, pegawai2Id, pegawai3Id, pegawai4Id, puskesmasId, tipe) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
       db.query(
         sql,
         [
@@ -121,7 +178,9 @@ module.exports = {
           pegawai1.value,
           pegawai2.value,
           pegawai3.value,
+          pegawai4.value,
           puskesmas.value,
+          tipe,
         ],
         (err, result) => {
           if (err) {
@@ -224,5 +283,25 @@ ORDER BY keberangkatans.keberangkatan ASC`;
       console.error("Error handling post request:", error);
       res.status(500).send("Terjadi kesalahan saat menangani permintaan.");
     }
+  },
+
+  editNomorSurat: async (req, res) => {
+    console.log(req.body, `editSURATTTTTTTTTTTT`);
+    const { nomorSuratTugas, nomorSuratNotaDinas, nomorSuratSPD, id } =
+      req.body;
+    const sql = `UPDATE keberangkatans SET nomorSuratNotaDinas = ?, nomorSuratSPD = ?, nomorSuratTugas = ? WHERE id = ?`;
+    db.query(
+      sql,
+      [nomorSuratNotaDinas, nomorSuratSPD, nomorSuratTugas, id],
+      (err, result) => {
+        if (err) {
+          console.error("Error updating data in database:", err);
+          return res
+            .status(500)
+            .send("Terjadi kesalahan saat mengupdate data di database.");
+        }
+        res.status(200).send("Data berhasil diupdate di database.");
+      }
+    );
   },
 };

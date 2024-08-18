@@ -6,6 +6,7 @@ import { Card, Table, Button, Modal } from "react-bootstrap";
 const Home = () => {
   const [pegawaiList, setPegawaiList] = useState([]);
   const [puskesmas, setPuskesmas] = useState(null);
+  const [jenisSPPD, setJenisSPPD] = useState(null);
   const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState("");
   const [tanggalPulang, setTanggalPulang] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -37,6 +38,13 @@ const Home = () => {
     }));
   };
 
+  const loadJenisSPPDOptions = async () => {
+    return [
+      { value: 1, label: "Distribusi" },
+      { value: 2, label: "Monitoring" },
+    ];
+  };
+
   const handleSelectPegawai = (selectedOption, pegawaiIndex) => {
     if (selectedOption) {
       const newPegawaiList = [...pegawaiList];
@@ -57,9 +65,11 @@ const Home = () => {
       pegawai1: pegawaiList[0],
       pegawai2: pegawaiList[1],
       pegawai3: pegawaiList[2],
+      pegawai4: jenisSPPD.value == 2 ? pegawaiList[3] : 0,
       puskesmas: puskesmas,
       keberangkatan: tanggalKeberangkatan,
       pulang: tanggalPulang,
+      tipe: jenisSPPD.value,
     };
 
     try {
@@ -114,6 +124,20 @@ const Home = () => {
             placeholder="Cari Pegawai 3"
           />
         </div>
+        {jenisSPPD?.value === 2 ? (
+          <div className="col">
+            <label>Pegawai 4</label>
+            <AsyncSelect
+              cacheOptions
+              loadOptions={loadPegawaiOptions}
+              defaultOptions
+              onChange={(selectedOption) =>
+                handleSelectPegawai(selectedOption, 3)
+              } // Pegawai 4
+              placeholder="Cari Pegawai 4"
+            />
+          </div>
+        ) : null}
       </div>
 
       {/* Kolom Pencarian untuk Puskesmas */}
@@ -142,6 +166,16 @@ const Home = () => {
             onChange={(e) => setTanggalPulang(e.target.value)}
             type="date"
             value={tanggalPulang}
+          />
+        </div>
+        <div className="col">
+          <label>Jenis SPPD</label>
+          <AsyncSelect
+            cacheOptions
+            loadOptions={loadJenisSPPDOptions}
+            defaultOptions
+            onChange={setJenisSPPD} // Simpan puskesmas yang dipilih
+            placeholder="Cari Puskesmas"
           />
         </div>
       </div>
@@ -190,10 +224,6 @@ const Home = () => {
           </Table>
         </Card.Body>
       </Card>
-
-      {/* ... existing code ... */}
-
-      {/* ... existing code ... */}
     </div>
   );
 };

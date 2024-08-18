@@ -8,6 +8,8 @@ const RekapSurat = () => {
   const [selectedData, setSelectedData] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editedData, setEditedData] = useState(null);
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     const date = new Date(dateString);
@@ -55,6 +57,34 @@ const RekapSurat = () => {
     }
   };
 
+  const handleEdit = (item) => {
+    setEditedData(item);
+    setEditMode(true);
+  };
+
+  const editData = () => {
+    // Make API call to update the data
+    Api.editNomorSurat({
+      id: editedData.id,
+      nomorSuratTugas: editedData.nomorSuratTugas,
+      nomorSuratNotaDinas: editedData.nomorSuratNotaDinas,
+      nomorSuratSPD: editedData.nomorSuratSPD,
+    })
+      .then((response) => {
+        // Handle response from API
+        // For example, show a success message
+
+        alert("Data updated successfully!");
+        // Close the edit modal
+        setEditMode(false);
+      })
+      .catch((error) => {
+        // Handle error from API
+        // For example, show an error message
+        alert("Failed to update data. Please try again.");
+      });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -98,6 +128,11 @@ const RekapSurat = () => {
                 <Dropdown.Item onClick={() => printKwitansi(item)}>
                   Print Kwitansi
                 </Dropdown.Item>
+                {editMode && editedData && (
+                  <Dropdown.Item onClick={() => handleEdit(item)}>
+                    Edit
+                  </Dropdown.Item>
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </Card.Body>
@@ -114,8 +149,16 @@ const RekapSurat = () => {
               <p>{JSON.parse(selectedData.puskesmasId).nama}</p>
               <p>Keberangkatan: {selectedData.keberangkatan}</p>
               <p>{selectedData.nomorSuratTugas}</p>
+
               <p>{selectedData.nomorSuratNotaDinas}</p>
+
               <p>{selectedData.nomorSuratSPD}</p>
+              <Button
+                variant="secondary"
+                onClick={() => handleEdit(selectedData)}
+              >
+                Edit
+              </Button>
               <p>{JSON.parse(selectedData.pegawai1).nama}</p>
               <p>{JSON.parse(selectedData.pegawai2).nama}</p>
               <p>{JSON.parse(selectedData.pegawai3).nama}</p>
@@ -142,6 +185,56 @@ const RekapSurat = () => {
           </Button>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Batal
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={editMode} onHide={() => setEditMode(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {editedData && (
+            <>
+              <input
+                type="text"
+                value={editedData.nomorSuratTugas}
+                onChange={(e) =>
+                  setEditedData({
+                    ...editedData,
+                    nomorSuratTugas: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="text"
+                value={editedData.nomorSuratNotaDinas}
+                onChange={(e) =>
+                  setEditedData({
+                    ...editedData,
+                    nomorSuratNotaDinas: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="text"
+                value={editedData.nomorSuratSPD}
+                onChange={(e) =>
+                  setEditedData({
+                    ...editedData,
+                    nomorSuratSPD: e.target.value,
+                  })
+                }
+              />
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setEditMode(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={editData}>
+            Edit
           </Button>
         </Modal.Footer>
       </Modal>
