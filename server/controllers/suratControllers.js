@@ -56,7 +56,6 @@ module.exports = {
 
       function generateNomorSurat(Keberangkatan, jenisSurat) {
         const date = new Date(keberangkatan);
-        const day = date.getDate().toString().padStart(2, "0");
         const month = (date.getMonth() + 1).toString().padStart(2, "0");
         const year = date.getFullYear().toString();
 
@@ -202,19 +201,40 @@ module.exports = {
     }
   },
   getAllSurat: (req, res) => {
-    const sql = `SELECT keberangkatans.id, keberangkatans.nomorSuratTugas, keberangkatans.keberangkatan, keberangkatans.pulang, keberangkatans.nomorSuratNotaDinas, keberangkatans.nomorSuratSPD, 
-JSON_OBJECT('id', pegawai1.id, 'nama', pegawai1.nama, 'NIP', pegawai1.NIP, 'jabatan', pegawai1.jabatan, 'golongan', pegawai1.golongan) AS pegawai1,
-JSON_OBJECT('id', pegawai2.id, 'nama', pegawai2.nama, 'NIP', pegawai2.NIP, 'jabatan', pegawai2.jabatan, 'golongan', pegawai2.golongan) AS pegawai2,
-JSON_OBJECT('id', pegawai3.id, 'nama', pegawai3.nama, 'NIP', pegawai3.NIP, 'jabatan', pegawai3.jabatan, 'golongan', pegawai3.golongan) AS pegawai3,
-JSON_OBJECT('id', puskesmas.id, 'nama', puskesmas.nama) AS puskesmasId
-FROM keberangkatans
-LEFT JOIN pegawais AS pegawai1 ON keberangkatans.pegawai1Id = pegawai1.id
-LEFT JOIN pegawais AS pegawai2 ON keberangkatans.pegawai2Id = pegawai2.id
-LEFT JOIN pegawais AS pegawai3 ON keberangkatans.pegawai3Id = pegawai3.id
-LEFT JOIN puskesmas ON keberangkatans.puskesmasId = puskesmas.id
-ORDER BY keberangkatans.keberangkatan ASC`;
+    const { pegawai } = req.query;
+    const tipe = req.query.tipe;
 
-    db.query(sql, (err, result) => {
+    console.log(tipe, "TIPEEEEEEEEEEEE");
+    let whereClause = "";
+
+    if (pegawai == "undefined" && tipe == "undefined") {
+      whereClause = "";
+    } else if (pegawai !== "undefined" && tipe == "undefined") {
+      whereClause =
+        "WHERE (pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?)";
+    } else if (pegawai !== "undefined" && tipe !== "undefined") {
+      whereClause = `WHERE ((pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.tipe = ${tipe})`;
+    } else if (pegawai == "undefined" && tipe !== "undefined") {
+      whereClause = `WHERE (keberangkatans.tipe = '${tipe}')`;
+    }
+
+    const sql = `SELECT keberangkatans.id, keberangkatans.nomorSuratTugas, keberangkatans.keberangkatan, keberangkatans.pulang, keberangkatans.nomorSuratNotaDinas, keberangkatans.nomorSuratSPD, keberangkatans.tipe, 
+    JSON_OBJECT('id', pegawai1.id, 'nama', pegawai1.nama, 'NIP', pegawai1.NIP, 'jabatan', pegawai1.jabatan, 'golongan', pegawai1.golongan) AS pegawai1,
+    JSON_OBJECT('id', pegawai2.id, 'nama', pegawai2.nama, 'NIP', pegawai2.NIP, 'jabatan', pegawai2.jabatan, 'golongan', pegawai2.golongan) AS pegawai2,
+    JSON_OBJECT('id', pegawai3.id, 'nama', pegawai3.nama, 'NIP', pegawai3.NIP, 'jabatan', pegawai3.jabatan, 'golongan', pegawai3.golongan) AS pegawai3,
+    JSON_OBJECT('id', pegawai4.id, 'nama', pegawai4.nama, 'NIP', pegawai4.NIP, 'jabatan', pegawai4.jabatan, 'golongan', pegawai4.golongan) AS pegawai4,
+    JSON_OBJECT('id', puskesmas.id, 'nama', puskesmas.nama) AS puskesmasId
+    FROM keberangkatans
+    LEFT JOIN pegawais AS pegawai1 ON keberangkatans.pegawai1Id = pegawai1.id
+    LEFT JOIN pegawais AS pegawai2 ON keberangkatans.pegawai2Id = pegawai2.id
+    LEFT JOIN pegawais AS pegawai3 ON keberangkatans.pegawai3Id = pegawai3.id
+    LEFT JOIN pegawais AS pegawai4 ON keberangkatans.pegawai4Id = pegawai4.id
+    LEFT JOIN puskesmas ON keberangkatans.puskesmasId = puskesmas.id
+    ${whereClause}
+    ORDER BY keberangkatans.keberangkatan ASC`;
+
+    console.log(sql);
+    db.query(sql, [pegawai, pegawai, pegawai, pegawai], (err, result) => {
       if (err) {
         console.error("Error fetching data from database:", err);
         return res
