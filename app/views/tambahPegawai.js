@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Api from "../helpers/api";
 import { Card, Table, Button, Modal } from "react-bootstrap";
 
@@ -8,6 +8,16 @@ const TambahPegawai = () => {
   const [NIP, setNip] = useState("");
   const [golongan, setGolongan] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  useEffect(() => {
+    if (nama !== "" && jabatan !== "" && NIP !== "" && golongan !== "") {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [nama, jabatan, NIP, golongan]);
+
   const sendDataToApi = async (dataToSend) => {
     try {
       console.log(dataToSend);
@@ -65,6 +75,7 @@ const TambahPegawai = () => {
             <button
               className="btn btn-primary"
               onClick={() => sendDataToApi({ nama, jabatan, NIP, golongan })}
+              disabled={isDisabled}
             >
               Tambah
             </button>

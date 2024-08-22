@@ -230,9 +230,19 @@ const RekapSurat = () => {
             </Card.Body>
           </Card>
         ))}
-        <Button variant="secondary" onClick={() => getRekap()}>
-          REKAP
-        </Button>
+        {jenisSPPD?.value === 1 ? (
+          <>
+            <Button variant="secondary" onClick={() => getRekap()}>
+              REKAP
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="secondary" onClick={() => getRekap()} disabled>
+              REKAP
+            </Button>
+          </>
+        )}
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Detail Data</Modal.Title>

@@ -48,4 +48,15 @@ module.exports = {
       res.status(500).send("Terjadi kesalahan.");
     }
   },
+
+  deleteAll: (req, res) => {
+    let sqlDelete = `DELETE FROM keberangkatans`;
+
+    db.query(sqlDelete, (err, result) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      res.status(200).send(`Semua rekap sudah dihapus`);
+    });
+  },
 };
