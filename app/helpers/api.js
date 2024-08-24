@@ -12,6 +12,8 @@ const Api = {
   tambahPegawai: (data) => Axios.post(`/pegawai/post`, data),
   editNomorSurat: (data) => Axios.post(`surat/edit`, data),
   simpanPerubahanPegawai: (data) => Axios.post(`pegawai/edit`, data),
+  tambahPuskesmas: (data) => Axios.post(`/puskesmas/post`, data),
+  hapusPuskesmas: (id) => Axios.post(`puskesmas/delete/${id}`),
 };
 
 export default Api;
