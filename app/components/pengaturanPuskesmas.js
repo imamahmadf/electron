@@ -6,10 +6,12 @@ import { useHistory } from "react-router-dom";
 
 const PengaturanPuskesmas = () => {
   const [puskesmas, setPuskesmas] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [editData, setEditData] = useState({
+    nama: "",
+    golongan: "",
+    jabatan: "",
+    NIP: "",
+  });
   const [editPuskesmasData, setEditPuskesmasData] = useState({});
   const [showEditPuskesmasModal, setShowEditPuskesmasModal] = useState(false);
   const [deletePuskesmasId, setDeletePuskesmasId] = useState(null);
@@ -28,14 +30,155 @@ const PengaturanPuskesmas = () => {
       }
     };
     fetchDataPuskesmas();
-    fetchData();
   }, [puskesmas]);
+
+  const hapusDataPuskesmas = (deletePuskesmasId) => {
+    console.log(deletePuskesmasId, "HPUS PKM");
+    Api.hapusPuskesmas(deletePuskesmasId)
+      .then((response) => {
+        console.log("Data pegawai berhasil dihapus");
+        setShowDeletePuskesmasModal(false);
+        // Optionally, you can update the state or perform any other actions after successful deletion
+      })
+      .catch((error) => {
+        console.error("Error deleting data puskesmas:", error);
+      });
+  };
+
+  const handleEditPuskesmasData = (puskesmas) => {
+    setEditPuskesmasData(puskesmas);
+    setShowEditPuskesmasModal(true);
+  };
+
+  const handleCloseEditPuskesmasModal = () => {
+    setShowEditPuskesmasModal(false);
+  };
+
+  const handleDeletePuskesmasConfirmation = (id) => {
+    setDeletePuskesmasId(id);
+    setShowDeletePuskesmasModal(true);
+  };
+
+  const handleCloseDeletePuskesmasModal = () => {
+    setShowDeletePuskesmasModal(false);
+  };
+
+  const simpanPerubahanData = () => {
+    Api.simpanPerubahanPegawai(editPuskesmasData)
+      .then((response) => {
+        console.log("Data puskesmas berhasil diubah");
+        setShowSuccessModal(true); // Tambahkan state untuk menampilkan modal sukses
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.error("Error updating data pegawai:", error);
+      });
+  };
 
   return (
     <>
       <div>
-        <p>pengaturn PKM</p>
+        <button
+          className="btn btn-primary mb-3"
+          onClick={() => {
+            history.push("/tambah-puskesmas");
+          }}
+        >
+          Tambah Puskesmas
+        </button>
+        <table className="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Nama</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {puskesmas.map((val, index) => (
+              <tr key={val.id}>
+                <td>{index + 1}</td>
+                <td>{val.nama}</td>
+                <td>
+                  <Dropdown>
+                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                      <i className="fas fa-ellipsis-v"></i>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        onClick={() => handleEditPuskesmasData(val)}
+                      >
+                        Edit
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() =>
+                          handleDeletePuskesmasConfirmation(val.id)
+                        }
+                      >
+                        Hapus
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+      <Modal
+        show={showEditPuskesmasModal}
+        onHide={handleCloseEditPuskesmasModal}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Data Puskesmas</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-group">
+            <label>Nama</label>
+            <input
+              type="text"
+              className="form-control"
+              value={editPuskesmasData.nama}
+              onChange={(e) =>
+                setEditPuskesmasData({
+                  ...editPuskesmasData,
+                  nama: e.target.value,
+                })
+              }
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseEditPuskesmasModal}>
+            Batal
+          </Button>
+          <Button variant="primary" onClick={simpanPerubahanData}>
+            Simpan
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showDeletePuskesmasModal}
+        onHide={handleCloseDeletePuskesmasModal}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Konfirmasi Hapus Data Puskesmas</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Apakah Anda yakin ingin menghapus data puskesmas ini?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDeletePuskesmasModal}>
+            Batal
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => hapusDataPuskesmas(deletePuskesmasId)}
+          >
+            Hapus
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

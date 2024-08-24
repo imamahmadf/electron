@@ -19,11 +19,8 @@ const Pengaturan = () => {
   });
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [editPuskesmasData, setEditPuskesmasData] = useState({});
-  const [showEditPuskesmasModal, setShowEditPuskesmasModal] = useState(false);
-  const [deletePuskesmasId, setDeletePuskesmasId] = useState(null);
-  const [showDeletePuskesmasModal, setShowDeletePuskesmasModal] =
-    useState(false);
+
+  useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -36,18 +33,12 @@ const Pengaturan = () => {
       }
     };
 
-    const fetchDataPuskesmas = async () => {
-      try {
-        const response = await Api.getPuskesmas();
-        setPuskesmas(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchDataPuskesmas();
     fetchData();
   }, [pegawaiData, puskesmas]);
 
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+  };
   const hapusDataPegawai = (id) => {
     Api.hapusPegawai(id)
       .then((response) => {
@@ -56,18 +47,6 @@ const Pengaturan = () => {
       })
       .catch((error) => {
         console.error("Error deleting data pegawai:", error);
-      });
-  };
-
-  const hapusDataPuskesmas = (deletePuskesmasId) => {
-    console.log(deletePuskesmasId, "HPUS PKM");
-    Api.hapusPuskesmas(deletePuskesmasId)
-      .then((response) => {
-        console.log("Data pegawai berhasil dihapus");
-        // Optionally, you can update the state or perform any other actions after successful deletion
-      })
-      .catch((error) => {
-        console.error("Error deleting data puskesmas:", error);
       });
   };
 
@@ -99,28 +78,6 @@ const Pengaturan = () => {
       .catch((error) => {
         console.error("Error updating data pegawai:", error);
       });
-  };
-
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
-  };
-
-  const handleEditPuskesmasData = (puskesmas) => {
-    setEditPuskesmasData(puskesmas);
-    setShowEditPuskesmasModal(true);
-  };
-
-  const handleCloseEditPuskesmasModal = () => {
-    setShowEditPuskesmasModal(false);
-  };
-
-  const handleDeletePuskesmasConfirmation = (id) => {
-    setDeletePuskesmasId(id);
-    setShowDeletePuskesmasModal(true);
-  };
-
-  const handleCloseDeletePuskesmasModal = () => {
-    setShowDeletePuskesmasModal(false);
   };
 
   return (
@@ -230,55 +187,8 @@ const Pengaturan = () => {
             role="tabpanel"
             aria-labelledby="v-pills-puskesmas-tab"
           >
-            <button
-              className="btn btn-primary mb-3"
-              onClick={() => {
-                history.push("/tambah-puskesmas");
-              }}
-            >
-              Tambah Puskesmas
-            </button>
-            <table className="table table-striped table-hover">
-              <thead>
-                <tr>
-                  <th>No.</th>
-                  <th>Nama</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {puskesmas.map((val, index) => (
-                  <tr key={val.id}>
-                    <td>{index + 1}</td>
-                    <td>{val.nama}</td>
-                    <td>
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          variant="secondary"
-                          id="dropdown-basic"
-                        >
-                          <i className="fas fa-ellipsis-v"></i>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item
-                            onClick={() => handleEditPuskesmasData(val)}
-                          >
-                            Edit
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() =>
-                              handleDeletePuskesmasConfirmation(val.id)
-                            }
-                          >
-                            Hapus
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/* disini */}
+            <PengaturanPuskesmas />
           </div>
           <div
             className={`tab-pane fade ${
@@ -371,41 +281,7 @@ const Pengaturan = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal
-        show={showEditPuskesmasModal}
-        onHide={handleCloseEditPuskesmasModal}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Data Puskesmas</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="form-group">
-            <label>Nama</label>
-            <input
-              type="text"
-              className="form-control"
-              value={editPuskesmasData.nama}
-              onChange={(e) =>
-                setEditPuskesmasData({
-                  ...editPuskesmasData,
-                  nama: e.target.value,
-                })
-              }
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseEditPuskesmasModal}>
-            Batal
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => simpanPerubahanPuskesmasData(editPuskesmasData)}
-          >
-            Simpan
-          </Button>
-        </Modal.Footer>
-      </Modal>
+
       <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Sukses!</Modal.Title>
@@ -414,28 +290,6 @@ const Pengaturan = () => {
         <Modal.Footer>
           <Button variant="primary" onClick={() => setShowSuccessModal(false)}>
             Tutup
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
-        show={showDeletePuskesmasModal}
-        onHide={handleCloseDeletePuskesmasModal}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Konfirmasi Hapus Data Puskesmas</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Apakah Anda yakin ingin menghapus data puskesmas ini?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseDeletePuskesmasModal}>
-            Batal
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => hapusDataPuskesmas(deletePuskesmasId)}
-          >
-            Hapus
           </Button>
         </Modal.Footer>
       </Modal>

@@ -38,7 +38,7 @@ module.exports = {
           .status(500)
           .send("Terjadi kesalahan saat mengupdate data di database.");
       }
-      res.status(200).send("Data berhasil diupdate di database.");
+      res.status(200).send(`Data berhasil diupdate di database. ${nama} ${id}`);
     });
   },
 
