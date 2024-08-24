@@ -9,6 +9,7 @@ import Rekap from "../views/rekap";
 import Pengaturan from "../views/pengaturan";
 import "../styles/main.css";
 import TambahPegawai from "../views/tambahPegawai";
+import EditPegawai from "../views/editPegawai";
 const history = createBrowserHistory();
 
 const Routes = (
@@ -20,6 +21,7 @@ const Routes = (
       <Route path="/rekap" component={Rekap} />
       <Route path="/pengaturan" component={Pengaturan} />
       <Route path="/tambah-pegawai" component={TambahPegawai} />
+      <Route path="/edit-pegawai" component={EditPegawai} />
       <Footer />
     </div>
   </Router>

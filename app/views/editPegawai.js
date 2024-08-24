@@ -1,42 +1,60 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Api from "../helpers/api";
-import { Card, Table, Button, Modal } from "react-bootstrap";
-import { useHistory } from "react-router-dom"; // Tambahkan ini
-
-const TambahPegawai = () => {
+import { Dropdown, Modal, Button } from "react-bootstrap";
+import { Link, useHistory } from "react-router-dom";
+const EditPegawai = (props) => {
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [nama, setNama] = useState("");
   const [jabatan, setJabatan] = useState("");
   const [NIP, setNip] = useState("");
   const [golongan, setGolongan] = useState("");
-  const [showModal, setShowModal] = useState(false); // Tambahkan state modal
-  const [isDisabled, setIsDisabled] = useState(true);
-  const history = useHistory(); // Tambahkan ini
+
+  //   const sendDataToApi = async (dataToSend) => {
+  //     try {
+  //       console.log(dataToSend);
+  //       Axios.post(
+  //         `pegawai/edit/${props.match.params.pegawaiId}`,
+  //         dataToSend
+  //       ).then((res) => {});
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
 
   useEffect(() => {
+    async function fetchData() {
+      await axios
+        .get(`pegawai/get/11`)
+        .then((res) => {
+          setNama(res.data.nama);
+          setJabatan(res.data.jabatan);
+          setNip(res.data.NIP);
+          setGolongan(res.data.golongan);
+
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.error(err.message);
+        });
+    }
+
     if (nama !== "" && jabatan !== "" && NIP !== "" && golongan !== "") {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
     }
+
+    fetchData();
   }, [nama, jabatan, NIP, golongan]);
 
-  const sendDataToApi = async (dataToSend) => {
-    try {
-      console.log(dataToSend);
-      const response = await Api.tambahPegawai(dataToSend); // Ganti dengan API yang sesuai
-      console.log("Data berhasil dikirim:", response.data);
-      setShowModal(true); // Tampilkan modal setelah berhasil mengirim data
-      history.push("/"); // Tambahkan ini untuk berpindah ke halaman awal
-    } catch (error) {
-      console.error("Error mengirim data:", error);
-      // Tambahkan logika untuk menangani error jika diperlukan
-    }
-  };
+  const history = useHistory(); // Add this line
 
   return (
     <>
       <div className="container">
-        <h1 className="mt-5">Tambah Pegawai</h1>
+        {/* <h1 className="mt-5">Tambah Pegawai</h1>
         <div className="row mt-3">
           <div className="col">
             <input
@@ -107,10 +125,10 @@ const TambahPegawai = () => {
               Tutup
             </Button>
           </Modal.Footer>
-        </Modal>
+        </Modal> */}
       </div>
     </>
   );
 };
 
-export default TambahPegawai;
+export default EditPegawai;

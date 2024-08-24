@@ -9,6 +9,14 @@ const Pengaturan = () => {
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [activeTab, setActiveTab] = useState("pegawai");
+  const [editData, setEditData] = useState({
+    nama: "",
+    golongan: "",
+    jabatan: "",
+    NIP: "",
+  });
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -22,7 +30,7 @@ const Pengaturan = () => {
     };
 
     fetchData();
-  }, []);
+  }, [pegawaiData]);
 
   const hapusDataPegawai = (id) => {
     Api.hapusPegawai(id)
@@ -46,6 +54,27 @@ const Pengaturan = () => {
 
   const handleTambahPegawai = () => {
     history.push("/tambah-pegawai");
+  };
+
+  const handleEditData = (pegawai) => {
+    setEditData(pegawai);
+    setShowEditModal(true);
+  };
+
+  const simpanPerubahanData = () => {
+    Api.simpanPerubahanPegawai(editData)
+      .then((response) => {
+        console.log("Data pegawai berhasil diubah");
+        setShowSuccessModal(true); // Tambahkan state untuk menampilkan modal sukses
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.error("Error updating data pegawai:", error);
+      });
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
   };
 
   return (
@@ -127,7 +156,7 @@ const Pengaturan = () => {
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Item
-                              onClick={() => handleEdit(pegawai.id)}
+                              onClick={() => handleEditData(pegawai)}
                             >
                               Edit
                             </Dropdown.Item>
@@ -186,6 +215,76 @@ const Pengaturan = () => {
             }}
           >
             Hapus
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showEditModal} onHide={handleCloseEditModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Data Pegawai</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-group">
+            <label>Nama</label>
+            <input
+              type="text"
+              className="form-control"
+              value={editData.nama}
+              onChange={(e) =>
+                setEditData({ ...editData, nama: e.target.value })
+              }
+            />
+          </div>
+          <div className="form-group">
+            <label>Golongan</label>
+            <input
+              type="text"
+              className="form-control"
+              value={editData.golongan}
+              onChange={(e) =>
+                setEditData({ ...editData, golongan: e.target.value })
+              }
+            />
+          </div>
+          <div className="form-group">
+            <label>Jabatan</label>
+            <input
+              type="text"
+              className="form-control"
+              value={editData.jabatan}
+              onChange={(e) =>
+                setEditData({ ...editData, jabatan: e.target.value })
+              }
+            />
+          </div>
+          <div className="form-group">
+            <label>NIP</label>
+            <input
+              type="text"
+              className="form-control"
+              value={editData.NIP}
+              onChange={(e) =>
+                setEditData({ ...editData, NIP: e.target.value })
+              }
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseEditModal}>
+            Batal
+          </Button>
+          <Button variant="primary" onClick={simpanPerubahanData}>
+            Simpan
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Sukses!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Data pegawai berhasil diubah.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowSuccessModal(false)}>
+            Tutup
           </Button>
         </Modal.Footer>
       </Modal>

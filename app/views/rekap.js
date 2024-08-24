@@ -3,6 +3,7 @@ import Api from "../helpers/api";
 import { Card, Button, Modal, Dropdown } from "react-bootstrap";
 import AsyncSelect from "react-select/async";
 import axios from "axios";
+import { useHistory } from "react-router-dom"; // Tambahkan ini
 
 const RekapSurat = () => {
   const [data, setData] = useState([]);
@@ -14,7 +15,7 @@ const RekapSurat = () => {
   const [editedData, setEditedData] = useState(null);
   const [jenisSPPD, setJenisSPPD] = useState(null);
   const [pegawaiList, setPegawaiList] = useState([]);
-
+  const history = useHistory(); // Tambahkan ini
   const getRekap = () => {
     axios
       .post(`rekap/get`, data)
@@ -23,6 +24,20 @@ const RekapSurat = () => {
         console.error(err.message);
       });
     console.log("REKAP!!!");
+  };
+
+  const hapusAll = () => {
+    axios
+      .post(`/rekap/delete/all`)
+      .then((res) => {
+        setShowDeleteModal(true); // Menampilkan modal konfirmasi hapus semua data
+        setTimeout(() => {
+          history.push("/"); // Redirect ke halaman awal setelah beberapa detik
+        }, 3000); // Misalnya, tunggu 3 detik sebelum redirect
+      })
+      .catch((err) => {
+        console.log("Gagal menghapus semua perjalanan");
+      });
   };
 
   const loadJenisSPPDOptions = async () => {
@@ -243,6 +258,9 @@ const RekapSurat = () => {
             </Button>
           </>
         )}
+        <Button variant="danger" onClick={() => hapusAll()}>
+          Hapus SPPD
+        </Button>
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Detail Data</Modal.Title>

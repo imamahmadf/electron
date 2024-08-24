@@ -77,6 +77,11 @@ const Home = () => {
       const response = await Api.buatSurat(dataToSend); // Ganti dengan API yang sesuai
       console.log("Data berhasil dikirim:", response.data);
       setShowModal(true); // Tampilkan modal setelah berhasil mengirim data
+      setPegawaiList([]);
+      setPuskesmas(null);
+      setJenisSPPD(null);
+      setTanggalKeberangkatan("");
+      setTanggalPulang("");
     } catch (error) {
       console.error("Error mengirim data:", error);
       // Tambahkan logika untuk menangani error jika diperlukan
@@ -180,9 +185,24 @@ const Home = () => {
         </div>
       </div>
 
-      <Button className="mt-3" onClick={handleSubmit}>
-        Buat
-      </Button>
+      {pegawaiList &&
+      puskesmas &&
+      jenisSPPD &&
+      tanggalKeberangkatan &&
+      tanggalPulang ? (
+        <>
+          <Button className="mt-3" onClick={handleSubmit}>
+            Buat
+          </Button>
+        </>
+      ) : (
+        <>
+          {" "}
+          <Button className="mt-3" onClick={handleSubmit} disabled>
+            Buat
+          </Button>
+        </>
+      )}
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>

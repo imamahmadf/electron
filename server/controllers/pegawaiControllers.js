@@ -38,4 +38,21 @@ module.exports = {
       res.status(200).send("Data pegawai berhasil ditambahakan ke database");
     });
   },
+
+  editPegawai: (req, res) => {
+    console.log(req.body);
+    const { nama, jabatan, NIP, golongan, id } = req.body;
+
+    const sql = `UPDATE pegawais SET nama = ?, jabatan = ?, NIP = ?, golongan = ? WHERE id = ?`;
+
+    db.query(sql, [nama, jabatan, NIP, golongan, id], (err, result) => {
+      if (err) {
+        console.error("Error updating data in database:", err);
+        return res
+          .status(500)
+          .send("Terjadi kesalahan saat mengupdate data di database.");
+      }
+      res.status(200).send("Data berhasil diupdate di database.");
+    });
+  },
 };
