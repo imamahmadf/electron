@@ -201,21 +201,45 @@ module.exports = {
     }
   },
   getAllSurat: (req, res) => {
-    const { pegawai } = req.query;
+    const { pegawai, keberangkatan, pulang } = req.query;
     const tipe = req.query.tipe;
 
-    console.log(tipe, "TIPEEEEEEEEEEEE");
+    console.log(req.query, "TIPEEEEEEEEEEEE");
     let whereClause = "";
 
     if (pegawai == "undefined" && tipe == "undefined") {
-      whereClause = "";
+      if (keberangkatan !== "" && pulang !== "") {
+        whereClause = `WHERE keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
+        console.log("AAAAAAAAAAA 1111111");
+      } else {
+        whereClause = "";
+        console.log("BBBBBBBBBB 111111111");
+      }
     } else if (pegawai !== "undefined" && tipe == "undefined") {
-      whereClause =
-        "WHERE (pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?)";
+      if (keberangkatan && pulang) {
+        whereClause = `WHERE (pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
+        console.log("AAAAAAAAAAA 2222222");
+      } else {
+        whereClause =
+          "WHERE (pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?)";
+        console.log("BBBBBBBBBB 222222222");
+      }
     } else if (pegawai !== "undefined" && tipe !== "undefined") {
-      whereClause = `WHERE ((pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.tipe = ${tipe})`;
+      if (keberangkatan && pulang) {
+        whereClause = `WHERE ((pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.tipe = ${tipe}) AND keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
+        console.log("AAAAAAAAAAA 3333333");
+      } else {
+        whereClause = `WHERE ((pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.tipe = ${tipe})`;
+        console.log("BBBBBBBBBB 33333333");
+      }
     } else if (pegawai == "undefined" && tipe !== "undefined") {
-      whereClause = `WHERE (keberangkatans.tipe = '${tipe}')`;
+      if (keberangkatan && pulang) {
+        whereClause = `WHERE (keberangkatans.tipe = '${tipe}') AND keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
+        console.log("AAAAAAAAAAA 444444");
+      } else {
+        whereClause = `WHERE (keberangkatans.tipe = '${tipe}')`;
+        console.log("BBBBBBBBBB 444444");
+      }
     }
 
     const sql = `SELECT keberangkatans.id, keberangkatans.nomorSuratTugas, keberangkatans.keberangkatan, keberangkatans.pulang, keberangkatans.nomorSuratNotaDinas, keberangkatans.nomorSuratSPD, keberangkatans.tipe, 

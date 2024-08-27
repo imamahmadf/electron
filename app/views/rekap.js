@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Api from "../helpers/api";
-import { Card, Button, Modal, Dropdown } from "react-bootstrap";
+import { Card, Button, Modal, Dropdown, Table } from "react-bootstrap";
 import AsyncSelect from "react-select/async";
 import axios from "axios";
 import { useHistory } from "react-router-dom"; // Tambahkan ini
@@ -15,6 +15,8 @@ const RekapSurat = () => {
   const [editedData, setEditedData] = useState(null);
   const [jenisSPPD, setJenisSPPD] = useState(null);
   const [pegawaiList, setPegawaiList] = useState([]);
+  const [tanggalPulang, setTanggalPulang] = useState("");
+  const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState("");
   const history = useHistory(); // Tambahkan ini
   const getRekap = () => {
     axios
@@ -24,6 +26,12 @@ const RekapSurat = () => {
         console.error(err.message);
       });
     console.log("REKAP!!!");
+  };
+
+  const handleTanggalKeberangkatanChange = (e) => {
+    const selectedDate = e.target.value;
+    setTanggalKeberangkatan(selectedDate);
+    setTanggalPulang(selectedDate); // Set tanggal pulang sama dengan tanggal keberangkatan
   };
 
   const hapusAll = () => {
@@ -130,35 +138,20 @@ const RekapSurat = () => {
       nomorSuratSPD: editedData.nomorSuratSPD,
     })
       .then((response) => {
-        // Handle response from API
-        // For example, show a success message
-
         alert("Data updated successfully!");
         // Close the edit modal
         setEditMode(false);
       })
       .catch((error) => {
-        // Handle error from API
-        // For example, show an error message
         alert("Failed to update data. Please try again.");
       });
   };
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   try {
-    //     const response = await Api.rekapSurat();
-    //     setData(response.data);
-    //     console.log(response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching data: ", error);
-    //   }
-    // };
-
     async function fetchData() {
       await axios
         .get(
-          `surat/get?pegawai=${pegawaiList[0]?.value}&tipe=${jenisSPPD?.value}`
+          `surat/get?pegawai=${pegawaiList[0]?.value}&tipe=${jenisSPPD?.value}&keberangkatan=${tanggalKeberangkatan}&pulang=${tanggalPulang}`
         )
         .then((res) => {
           setData(res.data);
@@ -171,80 +164,118 @@ const RekapSurat = () => {
     }
     console.log(jenisSPPD);
     fetchData();
-  }, [pegawaiList, jenisSPPD]);
+  }, [pegawaiList, jenisSPPD, tanggalKeberangkatan, tanggalPulang]);
 
   return (
     <div>
-      <div className="container">
-        <div className="row">
-          <div className="col">
-            <label>Pegawai 1</label>
-            <AsyncSelect
-              cacheOptions
-              loadOptions={loadPegawaiOptions}
-              defaultOptions
-              onChange={(selectedOption) =>
-                handleSelectPegawai(selectedOption, 0)
-              } // Pegawai 1
-              placeholder="Cari Pegawai 1"
-            />
+      <div className="p-5">
+        <div className="container mb-5">
+          <div className="row">
+            <div className="col">
+              <label>Pegawai </label>
+              <AsyncSelect
+                cacheOptions
+                loadOptions={loadPegawaiOptions}
+                defaultOptions
+                onChange={(selectedOption) =>
+                  handleSelectPegawai(selectedOption, 0)
+                } // Pegawai 1
+                placeholder="Cari Pegawai "
+              />
+            </div>
+            <div className="col">
+              <label>Jenis SPPD</label>
+              <AsyncSelect
+                cacheOptions
+                loadOptions={loadJenisSPPDOptions}
+                defaultOptions
+                onChange={setJenisSPPD} // Simpan puskesmas yang dipilih
+                placeholder="jenis SPPD"
+              />
+            </div>
+            <div className="col">
+              <label>Tanggal Keberangkatan</label>
+              <input
+                onChange={handleTanggalKeberangkatanChange}
+                type="date"
+                value={tanggalKeberangkatan}
+              />
+            </div>
+            <div className="col">
+              <label>Tanggal Pulang</label>
+              <input
+                onChange={(e) => setTanggalPulang(e.target.value)}
+                type="date"
+                value={tanggalPulang}
+              />
+            </div>
           </div>
-          <div className="col">
-            <label>Jenis SPPD</label>
-            <AsyncSelect
-              cacheOptions
-              loadOptions={loadJenisSPPDOptions}
-              defaultOptions
-              onChange={setJenisSPPD} // Simpan puskesmas yang dipilih
-              placeholder="Cari Puskesmas"
-            />
-          </div>
-        </div>
-        {data.map((item) => (
-          <Card
-            key={item.id}
-            style={{
-              width: "100%",
-              marginBottom: "10px",
-              position: "relative",
-            }}
-          >
-            <Card.Body>
-              <Card.Title>
-                {item.tipe == 1 ? "Distribusi ke PKM: " : "Monitoring ke PKM: "}
-                {JSON.parse(item.puskesmasId).nama}
-              </Card.Title>
-              <Card.Text>
-                Keberangkatan: {formatDate(item.keberangkatan)}
-              </Card.Text>
-
-              <Dropdown
-                style={{ position: "absolute", top: "10px", right: "10px" }}
-              >
-                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                  <i className="fas fa-ellipsis-v"></i>
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => handleModal(item)}>
-                    Detail
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleDelete(item.id)}>
-                    Hapus
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => printKwitansi(item)}>
-                    Print Kwitansi
-                  </Dropdown.Item>
-                  {editMode && editedData && (
-                    <Dropdown.Item onClick={() => handleEdit(item)}>
-                      Edit
-                    </Dropdown.Item>
+        </div>{" "}
+        <Card className="p-3">
+          <Card.Title className="text-center mb-3">
+            Daftar{" "}
+            {jenisSPPD?.value == 1
+              ? "Distribusi"
+              : jenisSPPD?.value == 2
+              ? "Monitoring"
+              : "Distribusi dan Monitoring"}
+          </Card.Title>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Puskesmas</th>
+                <th>Keberangkatan</th>
+                <th>Pegawai 1</th>
+                <th>Pegawai 2</th>
+                <th>Pegawai 3</th>
+                {jenisSPPD?.value == 1 ? null : <th>Pegawai 4</th>}
+                <th>Nomor Surat</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, idx) => (
+                <tr key={item.id}>
+                  <td>{idx + 1}</td>
+                  <td>{JSON.parse(item.puskesmasId).nama}</td>
+                  <td>{formatDate(item.keberangkatan)}</td>
+                  <td>{JSON.parse(item.pegawai1).nama}</td>
+                  <td>{JSON.parse(item.pegawai2).nama}</td>
+                  <td>{JSON.parse(item.pegawai3).nama}</td>
+                  {jenisSPPD?.value == 1 ? null : (
+                    <td>{JSON.parse(item.pegawai4)?.nama}</td>
                   )}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Card.Body>
-          </Card>
-        ))}
+                  <td>
+                    {item.nomorSuratNotaDinas}
+                    <br />
+                    {item.nomorSuratTugas}
+                    <br />
+                    {item.nomorSuratSPD}
+                  </td>
+                  <td>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                        <i className="fas fa-ellipsis-v"></i>
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => handleEdit(item)}>
+                          Edit
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleDelete(item.id)}>
+                          Hapus
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => printKwitansi(item)}>
+                          Print Kwitansi
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card>
         {jenisSPPD?.value === 1 ? (
           <>
             <Button variant="secondary" onClick={() => getRekap()}>
@@ -294,7 +325,6 @@ const RekapSurat = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-
         <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Konfirmasi Hapus Data</Modal.Title>
@@ -314,7 +344,6 @@ const RekapSurat = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-
         <Modal show={editMode} onHide={() => setEditMode(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Edit Data</Modal.Title>
