@@ -9,6 +9,7 @@ const {
   pegawaiRouters,
   puskesmasRouters,
   rekapRouters,
+  strukturRouters,
 } = require("./server/routers");
 
 const app = express();
@@ -26,5 +27,6 @@ app.use("/surat", suratRouters);
 app.use("/pegawai", pegawaiRouters);
 app.use("/puskesmas", puskesmasRouters);
 app.use("/rekap", rekapRouters);
+app.use("/struktur", strukturRouters);
 
 app.listen(5000, () => console.log("App running on port 5000 🔥"));

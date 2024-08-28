@@ -4,6 +4,7 @@ import { Dropdown, Modal, Button } from "react-bootstrap";
 import Api from "../helpers/api";
 import { useHistory } from "react-router-dom";
 import PengaturanPuskesmas from "../components/pengaturanPuskesmas";
+import Struktur from "../components/struktur";
 
 const Pengaturan = () => {
   const [pegawaiData, setPegawaiData] = useState([]);
@@ -22,19 +23,18 @@ const Pengaturan = () => {
 
   useState(false);
   const history = useHistory();
-
+  const fetchData = async () => {
+    try {
+      const response = await Api.getPegawai();
+      console.log(response, "AAAAAAAAAAAAAAA");
+      setPegawaiData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await Api.getPegawai();
-        setPegawaiData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
-  }, [pegawaiData, puskesmas]);
+  }, []);
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
@@ -43,6 +43,7 @@ const Pengaturan = () => {
     Api.hapusPegawai(id)
       .then((response) => {
         console.log("Data pegawai berhasil dihapus");
+
         // Optionally, you can update the state or perform any other actions after successful deletion
       })
       .catch((error) => {
@@ -74,6 +75,7 @@ const Pengaturan = () => {
         console.log("Data pegawai berhasil diubah");
         setShowSuccessModal(true); // Tambahkan state untuk menampilkan modal sukses
         setShowEditModal(false);
+        fetchData();
       })
       .catch((error) => {
         console.error("Error updating data pegawai:", error);
@@ -198,7 +200,7 @@ const Pengaturan = () => {
             role="tabpanel"
             aria-labelledby="v-pills-lainnya-tab"
           >
-            {/* Pengaturan lainnya */}
+            <Struktur />
           </div>
         </div>
       </div>

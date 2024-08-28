@@ -31,7 +31,9 @@ const RekapSurat = () => {
   const handleTanggalKeberangkatanChange = (e) => {
     const selectedDate = e.target.value;
     setTanggalKeberangkatan(selectedDate);
-    setTanggalPulang(selectedDate); // Set tanggal pulang sama dengan tanggal keberangkatan
+    if (tanggalPulang === "") {
+      setTanggalPulang(selectedDate);
+    }
   };
 
   const hapusAll = () => {

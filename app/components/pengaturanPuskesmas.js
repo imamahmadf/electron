@@ -17,20 +17,22 @@ const PengaturanPuskesmas = () => {
   const [deletePuskesmasId, setDeletePuskesmasId] = useState(null);
   const [showDeletePuskesmasModal, setShowDeletePuskesmasModal] =
     useState(false);
-
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const history = useHistory();
 
+  const fetchDataPuskesmas = async () => {
+    try {
+      const response = await Api.getPuskesmas();
+      setPuskesmas(response.data);
+      console.log(puskesmas);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchDataPuskesmas = async () => {
-      try {
-        const response = await Api.getPuskesmas();
-        setPuskesmas(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
     fetchDataPuskesmas();
-  }, [puskesmas]);
+  }, []);
 
   const hapusDataPuskesmas = (deletePuskesmasId) => {
     console.log(deletePuskesmasId, "HPUS PKM");
@@ -38,6 +40,7 @@ const PengaturanPuskesmas = () => {
       .then((response) => {
         console.log("Data pegawai berhasil dihapus");
         setShowDeletePuskesmasModal(false);
+        fetchDataPuskesmas();
         // Optionally, you can update the state or perform any other actions after successful deletion
       })
       .catch((error) => {
@@ -68,7 +71,8 @@ const PengaturanPuskesmas = () => {
       .then((response) => {
         console.log("Data puskesmas berhasil diubah");
         setShowSuccessModal(true); // Tambahkan state untuk menampilkan modal sukses
-        setShowEditModal(false);
+        setShowEditPuskesmasModal(false);
+        fetchDataPuskesmas();
       })
       .catch((error) => {
         console.error("Error updating data pegawai:", error);
@@ -176,6 +180,17 @@ const PengaturanPuskesmas = () => {
             onClick={() => hapusDataPuskesmas(deletePuskesmasId)}
           >
             Hapus
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Sukses!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Nama Puskesmas berhasil diubah.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowSuccessModal(false)}>
+            Tutup
           </Button>
         </Modal.Footer>
       </Modal>
