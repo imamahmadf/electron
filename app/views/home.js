@@ -25,7 +25,7 @@ const Home = () => {
       NIP: pegawai.NIP, // Asumsi ada field golongan
     }));
   };
-
+  // //////////////////////////
   const loadPuskesmasOptions = async (inputValue) => {
     const response = await Api.getPuskesmas(); // Ambil data puskesmas dari API
     const filteredOptions = response.data.filter((puskesmas) =>
@@ -37,7 +37,7 @@ const Home = () => {
       label: puskesmas.nama,
     }));
   };
-
+  // ////////////////////////////
   const loadJenisSPPDOptions = async () => {
     return [
       { value: 1, label: "Distribusi" },
@@ -89,8 +89,8 @@ const Home = () => {
   };
 
   return (
-    <div className="container text-center">
-      <h2>Pencarian Pegawai</h2>
+    <div className="container text-center mt-5 pt-5">
+      <h2 className="mt-3">Pencarian Pegawai</h2>
 
       <div className="row">
         <div className="col">
@@ -157,6 +157,7 @@ const Home = () => {
             placeholder="Cari Puskesmas"
           />
         </div>
+        {/* ///////////////// */}
         <div className="col">
           <label>Tanggal Keberangkatan</label>
           <input

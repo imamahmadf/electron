@@ -16,6 +16,7 @@ const Api = {
   hapusPuskesmas: (id) => Axios.post(`puskesmas/delete/${id}`),
   getStruktur: () => Axios.get(`/struktur/get`),
   editStruktur: (data) => Axios.post(`/struktur/edit`, data),
+  gantiTujuanPuskesmas: (data) => Axios.post(`surat/edit-puskesmas`, data),
 };
 
 export default Api;

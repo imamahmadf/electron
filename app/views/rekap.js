@@ -17,10 +17,16 @@ const RekapSurat = () => {
   const [pegawaiList, setPegawaiList] = useState([]);
   const [tanggalPulang, setTanggalPulang] = useState("");
   const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState("");
+  const [editTujuanData, setEditTujuanData] = useState(null);
+  const [editTujuanMode, setEditTujuanMode] = useState(false);
+
   const history = useHistory(); // Tambahkan ini
   const getRekap = () => {
+    // Reverse the order of data before sending to the API
+    const reversedData = [...data].reverse();
+
     axios
-      .post(`rekap/get`, data)
+      .post(`rekap/get`, reversedData)
       .then((res) => {})
       .catch((err) => {
         console.error(err.message);
@@ -131,6 +137,11 @@ const RekapSurat = () => {
     setEditMode(true);
   };
 
+  const editTujuan = (item) => {
+    setEditTujuanData(item);
+    setEditTujuanMode(true);
+  };
+
   const editData = () => {
     // Make API call to update the data
     Api.editNomorSurat({
@@ -149,28 +160,54 @@ const RekapSurat = () => {
       });
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      await axios
-        .get(
-          `surat/get?pegawai=${pegawaiList[0]?.value}&tipe=${jenisSPPD?.value}&keberangkatan=${tanggalKeberangkatan}&pulang=${tanggalPulang}`
-        )
-        .then((res) => {
-          setData(res.data);
+  const loadPuskesmasOptions = async (inputValue) => {
+    const response = await Api.getPuskesmas(); // Ambil data puskesmas dari API
+    const filteredOptions = response.data.filter((puskesmas) =>
+      puskesmas.nama.toLowerCase().includes(inputValue.toLowerCase())
+    );
 
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.error(err.message);
-        });
-    }
-    console.log(jenisSPPD);
+    return filteredOptions.map((puskesmas) => ({
+      value: puskesmas.id,
+      label: puskesmas.nama,
+    }));
+  };
+
+  const sendTujuanData = () => {
+    console.log(editTujuanData, "WWWWW");
+    Api.gantiTujuanPuskesmas({
+      id: editTujuanData.id,
+      puskesmasId: editTujuanData.puskesmasId,
+    })
+      .then((response) => {
+        fetchData();
+        setEditTujuanMode(false);
+      })
+      .catch((error) => {
+        alert("Failed to update data. Please try again.");
+      });
+  };
+  async function fetchData() {
+    await axios
+      .get(
+        `surat/get?pegawai=${pegawaiList[0]?.value}&tipe=${jenisSPPD?.value}&keberangkatan=${tanggalKeberangkatan}&pulang=${tanggalPulang}`
+      )
+      .then((res) => {
+        setData(res.data);
+
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  }
+  console.log(jenisSPPD);
+  useEffect(() => {
     fetchData();
   }, [pegawaiList, jenisSPPD, tanggalKeberangkatan, tanggalPulang]);
 
   return (
-    <div>
-      <div className="p-5">
+    <div className="mt-5">
+      <div className="p-5 mt-5">
         <div className="container mb-5">
           <div className="row">
             <div className="col">
@@ -211,89 +248,107 @@ const RekapSurat = () => {
                 value={tanggalPulang}
               />
             </div>
+            <div>
+              {jenisSPPD?.value === 1 ? (
+                <>
+                  <Button variant="secondary" onClick={() => getRekap()}>
+                    REKAP
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="secondary"
+                    onClick={() => getRekap()}
+                    disabled
+                  >
+                    REKAP
+                  </Button>
+                </>
+              )}
+              <Button variant="danger" onClick={() => hapusAll()}>
+                Hapus SPPD
+              </Button>
+            </div>
           </div>
         </div>{" "}
-        <Card className="p-3">
-          <Card.Title className="text-center mb-3">
-            Daftar{" "}
-            {jenisSPPD?.value == 1
-              ? "Distribusi"
-              : jenisSPPD?.value == 2
-              ? "Monitoring"
-              : "Distribusi dan Monitoring"}
-          </Card.Title>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Puskesmas</th>
-                <th>Keberangkatan</th>
-                <th>Pegawai 1</th>
-                <th>Pegawai 2</th>
-                <th>Pegawai 3</th>
-                {jenisSPPD?.value == 1 ? null : <th>Pegawai 4</th>}
-                <th>Nomor Surat</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item, idx) => (
-                <tr key={item.id}>
-                  <td>{idx + 1}</td>
-                  <td>{JSON.parse(item.puskesmasId).nama}</td>
-                  <td>{formatDate(item.keberangkatan)}</td>
-                  <td>{JSON.parse(item.pegawai1).nama}</td>
-                  <td>{JSON.parse(item.pegawai2).nama}</td>
-                  <td>{JSON.parse(item.pegawai3).nama}</td>
-                  {jenisSPPD?.value == 1 ? null : (
-                    <td>{JSON.parse(item.pegawai4)?.nama}</td>
-                  )}
-                  <td>
-                    {item.nomorSuratNotaDinas}
-                    <br />
-                    {item.nomorSuratTugas}
-                    <br />
-                    {item.nomorSuratSPD}
-                  </td>
-                  <td>
-                    <Dropdown>
-                      <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                        <i className="fas fa-ellipsis-v"></i>
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => handleEdit(item)}>
-                          Edit
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleDelete(item.id)}>
-                          Hapus
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => printKwitansi(item)}>
-                          Print Kwitansi
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card>
-        {jenisSPPD?.value === 1 ? (
+        {data.length == 0 ? (
           <>
-            <Button variant="secondary" onClick={() => getRekap()}>
-              REKAP
-            </Button>
+            <h1>tidak ada perjalanan Dinas</h1>
           </>
         ) : (
-          <>
-            <Button variant="secondary" onClick={() => getRekap()} disabled>
-              REKAP
-            </Button>
-          </>
+          <Card className="p-3">
+            <Card.Title className="text-center mb-3">
+              Daftar{" "}
+              {jenisSPPD?.value == 1
+                ? "Distribusi"
+                : jenisSPPD?.value == 2
+                ? "Monitoring"
+                : "Distribusi dan Monitoring"}
+            </Card.Title>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Puskesmas</th>
+                  <th>Keberangkatan</th>
+                  <th>Pegawai 1</th>
+                  <th>Pegawai 2</th>
+                  <th>Pegawai 3</th>
+                  {jenisSPPD?.value == 1 ? null : <th>Pegawai 4</th>}
+                  <th>Nomor Surat</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item, idx) => (
+                  <tr key={item.id}>
+                    <td>{idx + 1}</td>
+                    <td>{JSON.parse(item.puskesmasId).nama}</td>
+                    <td>{formatDate(item.keberangkatan)}</td>
+                    <td>{JSON.parse(item.pegawai1).nama}</td>
+                    <td>{JSON.parse(item.pegawai2).nama}</td>
+                    <td>{JSON.parse(item.pegawai3).nama}</td>
+                    {jenisSPPD?.value == 1 ? null : (
+                      <td>{JSON.parse(item.pegawai4)?.nama}</td>
+                    )}
+                    <td>
+                      {item.nomorSuratNotaDinas}
+                      <br />
+                      {item.nomorSuratTugas}
+                      <br />
+                      {item.nomorSuratSPD}
+                    </td>
+                    <td>
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          variant="secondary"
+                          id="dropdown-basic"
+                        >
+                          <i className="fas fa-ellipsis-v"></i>
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <Dropdown.Item onClick={() => handleEdit(item)}>
+                            Edit
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => handleDelete(item.id)}>
+                            Hapus
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => printKwitansi(item)}>
+                            Print Kwitansi
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => editTujuan(item)}>
+                            Edit Tujuan
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Card>
         )}
-        <Button variant="danger" onClick={() => hapusAll()}>
-          Hapus SPPD
-        </Button>
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Detail Data</Modal.Title>
@@ -346,6 +401,7 @@ const RekapSurat = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+        {/* edit nomor */}
         <Modal show={editMode} onHide={() => setEditMode(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Edit Data</Modal.Title>
@@ -391,6 +447,40 @@ const RekapSurat = () => {
               Cancel
             </Button>
             <Button variant="primary" onClick={editData}>
+              Edit
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* edit pkm */}
+        <Modal show={editTujuanMode} onHide={() => setEditTujuanMode(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Data</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {editTujuanData && (
+              <>
+                <AsyncSelect
+                  cacheOptions
+                  loadOptions={loadPuskesmasOptions}
+                  defaultOptions
+                  onChange={(selectedOption) =>
+                    setEditTujuanData({
+                      ...editTujuanData,
+                      puskesmasId: selectedOption.value,
+                    })
+                  }
+                />
+              </>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setEditTujuanMode(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={sendTujuanData}>
               Edit
             </Button>
           </Modal.Footer>

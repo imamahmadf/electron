@@ -203,9 +203,7 @@ module.exports = {
   getAllSurat: (req, res) => {
     const { pegawai, keberangkatan, pulang } = req.query;
     const tipe = req.query.tipe;
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
-    const offset = (page - 1) * limit;
+
     console.log(req.query, "TIPEEEEEEEEEEEE");
     let whereClause = "";
 
@@ -257,8 +255,7 @@ module.exports = {
     LEFT JOIN pegawais AS pegawai4 ON keberangkatans.pegawai4Id = pegawai4.id
     LEFT JOIN puskesmas ON keberangkatans.puskesmasId = puskesmas.id
     ${whereClause}
-    ORDER BY keberangkatans.keberangkatan ASC
-    LIMIT ${limit} OFFSET ${offset}`;
+    ORDER BY keberangkatans.keberangkatan DESC`;
 
     console.log(sql);
     db.query(sql, [pegawai, pegawai, pegawai, pegawai], (err, result) => {
@@ -350,5 +347,22 @@ module.exports = {
         res.status(200).send("Data berhasil diupdate di database.");
       }
     );
+  },
+
+  editTujuan: (req, res) => {
+    const { puskesmasId, id } = req.body;
+    console.log(req.body);
+
+    const sql = `UPDATE keberangkatans SET puskesmasId = ? WHERE id = ?`;
+
+    db.query(sql, [puskesmasId, id], (err, result) => {
+      if (err) {
+        console.error("Error mengganti puskesmas");
+        return res
+          .status(500)
+          .send("terjadi kesalahan saat merubah data di database");
+      }
+      res.status(200).send("Data berhasil diupdate di database");
+    });
   },
 };

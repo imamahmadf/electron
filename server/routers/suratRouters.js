@@ -8,5 +8,6 @@ routers.get("/get", suratControllers.getAllSurat);
 routers.delete("/delete/:id", suratControllers.deleteSurat);
 routers.post(`/kwitansi`, suratControllers.printKwitansi);
 routers.post(`/edit`, suratControllers.editNomorSurat);
+routers.post(`/edit-puskesmas`, suratControllers.editTujuan);
 
 module.exports = routers;
