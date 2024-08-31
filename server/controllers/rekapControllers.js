@@ -6,6 +6,7 @@ const { app } = require("electron");
 
 module.exports = {
   getRekap: async (req, res) => {
+    console.log(req.body);
     const formatDate = (dateString) => {
       const options = { year: "numeric", month: "long", day: "numeric" };
       const date = new Date(dateString);
@@ -26,6 +27,8 @@ module.exports = {
 
       dataFromFrontend.forEach((data, index) => {
         const rowNumber = 7 + index * 4; // Baris dimulai dari 7, 11, 15, dst.
+
+        worksheet.getCell(`A${rowNumber}`).value = index + 1;
         worksheet.getCell(`B${rowNumber}`).value = formatDate(
           data.keberangkatan
         );

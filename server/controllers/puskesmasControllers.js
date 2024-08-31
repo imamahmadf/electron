@@ -2,7 +2,7 @@ const { db } = require("../database");
 
 module.exports = {
   getAllPuskesmas: (req, res) => {
-    let sqlGet = `SELECT id, nama FROM puskesmas`;
+    let sqlGet = `SELECT id, nama FROM puskesmas ORDER BY nama ASC`;
 
     db.query(sqlGet, (err, results) => {
       if (err) {

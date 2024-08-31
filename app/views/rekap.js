@@ -10,6 +10,8 @@ const RekapSurat = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPrintKwitansi, setShowPrintKwitansi] = useState(false);
+  const [printKwitansiData, setPrintKwitansiData] = useState({});
   const [deleteId, setDeleteId] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState(null);
@@ -100,6 +102,10 @@ const RekapSurat = () => {
     setShowDeleteModal(true);
   };
 
+  const handlePrintKwitansi = async (data) => {
+    setPrintKwitansiData(data);
+    setShowPrintKwitansi(true);
+  };
   const confirmDelete = async () => {
     try {
       await Api.hapusSurat(deleteId);
@@ -110,23 +116,26 @@ const RekapSurat = () => {
     }
   };
 
-  const printKwitansi = async (selectedData) => {
+  const printKwitansi = async () => {
+    console.log("SSSSS");
     try {
       const dataToSend = {
-        nomorSuratSPD: selectedData.nomorSuratSPD,
-        pegawai1Nama: JSON.parse(selectedData.pegawai1).nama,
-        pegawai1NIP: JSON.parse(selectedData.pegawai1).NIP,
-        pegawai2Nama: JSON.parse(selectedData.pegawai2).nama,
-        pegawai2NIP: JSON.parse(selectedData.pegawai2).NIP,
-        pegawai3Nama: JSON.parse(selectedData.pegawai3).nama,
-        pegawai3NIP: JSON.parse(selectedData.pegawai3).NIP,
+        nomorSuratSPD: printKwitansiData.nomorSuratSPD,
+        pegawai1Nama: JSON.parse(printKwitansiData.pegawai1).nama,
+        pegawai1NIP: JSON.parse(printKwitansiData.pegawai1).NIP,
+        pegawai2Nama: JSON.parse(printKwitansiData.pegawai2).nama,
+        pegawai2NIP: JSON.parse(printKwitansiData.pegawai2).NIP,
+        pegawai3Nama: JSON.parse(printKwitansiData.pegawai3).nama,
+        pegawai3NIP: JSON.parse(printKwitansiData.pegawai3).NIP,
       };
 
       // Send data to the backend API for printing kwitansi
-      await Api.printKwitansi(dataToSend);
+      await Api.printKwitansi(dataToSend).then((res) => {
+        setShowPrintKwitansi(false);
+        console.log("Kwitansi printed successfully!");
+      });
 
       // Optionally show a success message or perform any other actions
-      console.log("Kwitansi printed successfully!");
     } catch (error) {
       console.error("Error printing kwitansi: ", error);
     }
@@ -209,7 +218,7 @@ const RekapSurat = () => {
     <div className="mt-5">
       <div className="p-5 mt-5">
         <div className="container mb-5">
-          <div className="row">
+          <div className="row mt-5">
             <div className="col">
               <label>Pegawai </label>
               <AsyncSelect
@@ -334,7 +343,9 @@ const RekapSurat = () => {
                           <Dropdown.Item onClick={() => handleDelete(item.id)}>
                             Hapus
                           </Dropdown.Item>
-                          <Dropdown.Item onClick={() => printKwitansi(item)}>
+                          <Dropdown.Item
+                            onClick={() => handlePrintKwitansi(item)}
+                          >
                             Print Kwitansi
                           </Dropdown.Item>
                           <Dropdown.Item onClick={() => editTujuan(item)}>
@@ -396,6 +407,28 @@ const RekapSurat = () => {
             <Button
               variant="secondary"
               onClick={() => setShowDeleteModal(false)}
+            >
+              Batal
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={showPrintKwitansi}
+          onHide={() => setShowPrintKwitansi(false)}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Konfirmasi Print Kwitansi</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Apakah Anda yakin ingin mencetak kwitansi</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="success" onClick={printKwitansi}>
+              Print
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowPrintKwitansi(false)}
             >
               Batal
             </Button>

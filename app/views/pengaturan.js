@@ -83,8 +83,8 @@ const Pengaturan = () => {
   };
 
   return (
-    <div className="container">
-      <div className="d-flex align-items-start">
+    <div className="container mt-5 pt-5">
+      <div className="d-flex align-items-start mt-5">
         <div
           className="nav flex-column nav-pills me-3"
           id="v-pills-tab"

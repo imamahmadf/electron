@@ -2,7 +2,7 @@ const { db } = require("../database");
 
 module.exports = {
   getAll: (req, res) => {
-    let sqlGet = `SELECT id, nama, jabatan, NIP, golongan FROM pegawais`;
+    let sqlGet = `SELECT id, nama, jabatan, NIP, golongan FROM pegawais ORDER BY nama ASC`;
 
     db.query(sqlGet, (err, results) => {
       if (err) {
