@@ -4,6 +4,7 @@ const pegawaiRouters = require("./pegawaiRouters");
 const puskesmasRouters = require("./puskesmasRouters");
 const rekapRouters = require("./rekapRouter");
 const strukturRouters = require("./strukturRouters");
+const bankRouters = require("./bankRouters");
 module.exports = {
   userRouters,
   suratRouters,
@@ -11,4 +12,5 @@ module.exports = {
   puskesmasRouters,
   rekapRouters,
   strukturRouters,
+  bankRouters,
 };

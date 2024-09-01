@@ -127,6 +127,7 @@ const RekapSurat = () => {
         pegawai2NIP: JSON.parse(printKwitansiData.pegawai2).NIP,
         pegawai3Nama: JSON.parse(printKwitansiData.pegawai3).nama,
         pegawai3NIP: JSON.parse(printKwitansiData.pegawai3).NIP,
+        puskesmas: JSON.parse(printKwitansiData.puskesmasId),
       };
 
       // Send data to the backend API for printing kwitansi

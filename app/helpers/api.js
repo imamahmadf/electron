@@ -15,7 +15,7 @@ const Api = {
   tambahPuskesmas: (data) => Axios.post(`/puskesmas/post`, data),
   hapusPuskesmas: (id) => Axios.post(`puskesmas/delete/${id}`),
   getStruktur: () => Axios.get(`/struktur/get`),
-  editStruktur: (data) => Axios.post(`/struktur/edit`, data),
+  editStruktur: (data) => Axios.post(`/struktur/edit-kepala`, data),
   gantiTujuanPuskesmas: (data) => Axios.post(`surat/edit-puskesmas`, data),
 };
 

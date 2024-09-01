@@ -5,6 +5,7 @@ import Api from "../helpers/api";
 import { useHistory } from "react-router-dom";
 import PengaturanPuskesmas from "../components/pengaturanPuskesmas";
 import Struktur from "../components/struktur";
+import Bank from "../components/bank";
 
 const Pengaturan = () => {
   const [pegawaiData, setPegawaiData] = useState([]);
@@ -107,6 +108,16 @@ const Pengaturan = () => {
           >
             Puskesmas
           </button>
+
+          <button
+            className={`nav-link ${activeTab === "bank" ? "active" : ""}`}
+            onClick={() => handleTabChange("bank")}
+            role="tab"
+            aria-selected={activeTab === "bank"}
+          >
+            Bank
+          </button>
+
           <button
             className={`nav-link ${activeTab === "lainnya" ? "active" : ""}`}
             onClick={() => handleTabChange("lainnya")}
@@ -192,6 +203,18 @@ const Pengaturan = () => {
             {/* disini */}
             <PengaturanPuskesmas />
           </div>
+
+          <div
+            className={`tab-pane fade ${
+              activeTab === "bank" ? "show active" : ""
+            }`}
+            id="v-pills-lainnya"
+            role="tabpanel"
+            aria-labelledby="v-pills-lainnya-tab"
+          >
+            <Bank />
+          </div>
+
           <div
             className={`tab-pane fade ${
               activeTab === "lainnya" ? "show active" : ""

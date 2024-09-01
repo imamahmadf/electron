@@ -97,7 +97,7 @@ module.exports = {
         worksheet.getCell("G32").value = pegawai4.NIP; // pegawai3 NIP
         worksheet.getCell("G33").value = pegawai4.jabatan; // pegawai3 jabatan
 
-        worksheet.getCell("G39").value = `Puskesmas ${puskesmas.label}`; // pegawai3 jabatan
+        worksheet.getCell("G39").value = puskesmas.label; // pegawai3 jabatan
 
         worksheet.getCell("G40").value = formattedKeberangkatan; // tanggalKeberangkatan
         // worksheet.getCell("G36").value = formattedPulang; // tanggalPulang
@@ -131,7 +131,7 @@ module.exports = {
         worksheet.getCell("G27").value = pegawai3.golongan; // pegawai3 golongan
         worksheet.getCell("G28").value = pegawai3.NIP; // pegawai3 NIP
         worksheet.getCell("G29").value = pegawai3.jabatan; // pegawai3 jabatan
-        worksheet.getCell("G41").value = `Puskesmas ${puskesmas.label}`; // pegawai3 jabatan
+        worksheet.getCell("G41").value = puskesmas.label; // pegawai3 jabatan
         // Format tanggal ke format "DD MMMM YYYY"
 
         worksheet.getCell("G35").value = formattedKeberangkatan; // tanggalKeberangkatan
@@ -292,6 +292,8 @@ module.exports = {
       pegawai3Nama,
       pegawai3NIP,
     } = req.body;
+
+    console.log(req.body);
 
     try {
       const sourceFilePath = path.join(

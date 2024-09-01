@@ -16,27 +16,40 @@ module.exports = {
   editStruktur: (req, res) => {
     console.log(req.body);
     const { nama, NIP, id } = req.body;
-    const sourceFilePath1 = path.join(__dirname, "..", "assets", "REKAP.xlsx");
-    const sourceFilePath2 = path.join(
+
+    const sourceFilePathDistribusi = path.join(
       __dirname,
       "..",
       "assets",
       "DISTRIBUSI.xlsx"
     );
+    const sourceFilePathKwitansiDis = path.join(
+      __dirname,
+      "..",
+      "assets",
+      "KWITANSI DIS.xlsx"
+    );
 
-    const workbook1 = new Excel.Workbook();
-    const workbook2 = new Excel.Workbook();
+    const sourceFilePathMonev = path.join(
+      __dirname,
+      "..",
+      "assets",
+      "MONITORING.xlsx"
+    );
 
-    workbook1.xlsx
-      .readFile(sourceFilePath1)
+    const workbookDistribusi = new Excel.Workbook();
+    const workbookKwitansiDis = new Excel.Workbook();
+    const workbookMonev = new Excel.Workbook();
+
+    workbookMonev.xlsx
+      .readFile(sourceFilePathMonev)
       .then(() => {
-        const worksheet1 = workbook1.getWorksheet("Sheet1");
+        const worksheetMonev = workbookMonev.getWorksheet("SURTUG");
 
-        // Assuming you have the updated data in variables nama, NIP
-        worksheet1.getCell("A2").value = nama;
-        worksheet1.getCell("B2").value = NIP;
+        worksheetMonev.getCell("G53").value = nama;
+        worksheetMonev.getCell("G54").value = NIP;
 
-        return workbook1.xlsx.writeFile(sourceFilePath1);
+        return workbookMonev.xlsx.writeFile(sourceFilePathMonev);
       })
       .then(() => {
         console.log("Data successfully updated in REKAP.xlsx.");
@@ -45,16 +58,34 @@ module.exports = {
         console.error("Error updating data in REKAP.xlsx:", error);
       });
 
-    workbook2.xlsx
-      .readFile(sourceFilePath2)
+    workbookKwitansiDis.xlsx
+      .readFile(sourceFilePathKwitansiDis)
       .then(() => {
-        const worksheet2 = workbook2.getWorksheet("Sheet1");
+        const worksheetKwitansiDis =
+          workbookKwitansiDis.getWorksheet("RINCIAN BPD");
+
+        worksheetKwitansiDis.getCell("A39").value = nama;
+        worksheetKwitansiDis.getCell("A40").value = NIP;
+
+        return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
+      })
+      .then(() => {
+        console.log("Data successfully updated in REKAP.xlsx.");
+      })
+      .catch((error) => {
+        console.error("Error updating data in REKAP.xlsx:", error);
+      });
+
+    workbookDistribusi.xlsx
+      .readFile(sourceFilePathDistribusi)
+      .then(() => {
+        const worksheetDistribusi = workbookDistribusi.getWorksheet("SURTUG");
 
         // Assuming you have the updated data in variables nama, NIP
-        worksheet2.getCell("A2").value = nama;
-        worksheet2.getCell("B2").value = NIP;
+        worksheetDistribusi.getCell("G50").value = nama;
+        worksheetDistribusi.getCell("G51").value = NIP;
 
-        return workbook2.xlsx.writeFile(sourceFilePath2);
+        return workbookDistribusi.xlsx.writeFile(sourceFilePathDistribusi);
       })
       .then(() => {
         console.log("Data successfully updated in DISTRIBUSI.xlsx.");

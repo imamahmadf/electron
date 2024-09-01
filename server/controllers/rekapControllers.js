@@ -33,8 +33,9 @@ module.exports = {
           data.keberangkatan
         );
         worksheet.getCell(`C${rowNumber}`).value = formatDate(data.pulang);
-        worksheet.getCell(`D${rowNumber}`).value =
-          "PUSKESMAS" + JSON.parse(data.puskesmasId).nama.toUpperCase();
+        worksheet.getCell(`D${rowNumber}`).value = JSON.parse(
+          data.puskesmasId
+        ).nama.toUpperCase();
         worksheet.getCell(`E${rowNumber}`).value = JSON.parse(
           data.pegawai1
         ).nama;
