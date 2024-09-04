@@ -95,6 +95,8 @@ const PengaturanPuskesmas = () => {
             <tr>
               <th>No.</th>
               <th>Nama</th>
+              <th>Honor Distirbusi</th>
+              <th>Honor Monitoring</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -103,6 +105,8 @@ const PengaturanPuskesmas = () => {
               <tr key={val.id}>
                 <td>{index + 1}</td>
                 <td>{val.nama}</td>
+                <td>{val.honorDis}</td>
+                <td>{val.honorMon}</td>
                 <td>
                   <Dropdown>
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
@@ -147,6 +151,36 @@ const PengaturanPuskesmas = () => {
                 setEditPuskesmasData({
                   ...editPuskesmasData,
                   nama: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Honor Distribusi</label>
+            <input
+              type="number"
+              className="form-control"
+              value={editPuskesmasData.honorDis}
+              onChange={(e) =>
+                setEditPuskesmasData({
+                  ...editPuskesmasData,
+                  honorDis: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Honor Monitoring</label>
+            <input
+              type="number"
+              className="form-control"
+              value={editPuskesmasData.honorMon}
+              onChange={(e) =>
+                setEditPuskesmasData({
+                  ...editPuskesmasData,
+                  honorMon: e.target.value,
                 })
               }
             />

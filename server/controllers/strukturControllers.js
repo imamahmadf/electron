@@ -41,58 +41,142 @@ module.exports = {
     const workbookKwitansiDis = new Excel.Workbook();
     const workbookMonev = new Excel.Workbook();
 
-    workbookMonev.xlsx
-      .readFile(sourceFilePathMonev)
-      .then(() => {
-        const worksheetMonev = workbookMonev.getWorksheet("SURTUG");
+    if (id === 3) {
+      workbookKwitansiDis.xlsx
+        .readFile(sourceFilePathKwitansiDis)
+        .then(() => {
+          const worksheetKwitansiDis =
+            workbookKwitansiDis.getWorksheet("RINCIAN BPD");
 
-        worksheetMonev.getCell("G53").value = nama;
-        worksheetMonev.getCell("G54").value = NIP;
+          worksheetKwitansiDis.getCell("B27").value = nama;
+          worksheetKwitansiDis.getCell("B28").value = "NIP." + NIP;
 
-        return workbookMonev.xlsx.writeFile(sourceFilePathMonev);
-      })
-      .then(() => {
-        console.log("Data successfully updated in REKAP.xlsx.");
-      })
-      .catch((error) => {
-        console.error("Error updating data in REKAP.xlsx:", error);
-      });
+          return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
+        })
+        .then(() => {
+          console.log("Data successfully updated in KWITANSI DISTRIBUSI.xlsx.");
+        })
+        .catch((error) => {
+          console.error(
+            "Error updating data in KWITANSI DISTIRBUSI.xlsx:",
+            error
+          );
+        });
+    }
 
-    workbookKwitansiDis.xlsx
-      .readFile(sourceFilePathKwitansiDis)
-      .then(() => {
-        const worksheetKwitansiDis =
-          workbookKwitansiDis.getWorksheet("RINCIAN BPD");
+    if (id === 2) {
+      workbookMonev.xlsx
+        .readFile(sourceFilePathMonev)
+        .then(() => {
+          const worksheetMonev = workbookMonev.getWorksheet("NOTA DINAS");
 
-        worksheetKwitansiDis.getCell("A39").value = nama;
-        worksheetKwitansiDis.getCell("A40").value = NIP;
+          worksheetMonev.getCell("H53").value = nama;
+          worksheetMonev.getCell("H54").value = "NIP." + NIP;
 
-        return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
-      })
-      .then(() => {
-        console.log("Data successfully updated in REKAP.xlsx.");
-      })
-      .catch((error) => {
-        console.error("Error updating data in REKAP.xlsx:", error);
-      });
+          return workbookMonev.xlsx.writeFile(sourceFilePathMonev);
+        })
+        .then(() => {
+          console.log("Data successfully updated in MONITORING.xlsx.");
+        })
+        .catch((error) => {
+          console.error("Error updating data in MONITORING.xlsx:", error);
+        });
 
-    workbookDistribusi.xlsx
-      .readFile(sourceFilePathDistribusi)
-      .then(() => {
-        const worksheetDistribusi = workbookDistribusi.getWorksheet("SURTUG");
+      workbookDistribusi.xlsx
+        .readFile(sourceFilePathDistribusi)
+        .then(() => {
+          const worksheetDistribusi =
+            workbookDistribusi.getWorksheet("NOTA DINAS");
 
-        // Assuming you have the updated data in variables nama, NIP
-        worksheetDistribusi.getCell("G50").value = nama;
-        worksheetDistribusi.getCell("G51").value = NIP;
+          // Assuming you have the updated data in variables nama, NIP
+          worksheetDistribusi.getCell("H55").value = nama;
+          worksheetDistribusi.getCell("H56").value = "NIP." + NIP;
 
-        return workbookDistribusi.xlsx.writeFile(sourceFilePathDistribusi);
-      })
-      .then(() => {
-        console.log("Data successfully updated in DISTRIBUSI.xlsx.");
-      })
-      .catch((error) => {
-        console.error("Error updating data in DISTRIBUSI.xlsx:", error);
-      });
+          return workbookDistribusi.xlsx.writeFile(sourceFilePathDistribusi);
+        })
+        .then(() => {
+          console.log("Data successfully updated in DISTRIBUSI.xlsx.");
+        })
+        .catch((error) => {
+          console.error("Error updating data in DISTRIBUSI.xlsx:", error);
+        });
+
+      workbookKwitansiDis.xlsx
+        .readFile(sourceFilePathKwitansiDis)
+        .then(() => {
+          const worksheetKwitansiDis =
+            workbookKwitansiDis.getWorksheet("KWIT GLOBAL");
+
+          worksheetKwitansiDis.getCell("A28").value = nama;
+          worksheetKwitansiDis.getCell("A29").value = "NIP." + NIP;
+
+          return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
+        })
+        .then(() => {
+          console.log("Data successfully updated in KWITANSI DISTRIBUSI.xlsx.");
+        })
+        .catch((error) => {
+          console.error(
+            "Error updating data in KWITANSI DISTIRBUSI.xlsx:",
+            error
+          );
+        });
+    }
+
+    if (id === 1) {
+      workbookMonev.xlsx
+        .readFile(sourceFilePathMonev)
+        .then(() => {
+          const worksheetMonev = workbookMonev.getWorksheet("SURTUG");
+
+          worksheetMonev.getCell("G53").value = nama;
+          worksheetMonev.getCell("G54").value = "NIP." + NIP;
+
+          return workbookMonev.xlsx.writeFile(sourceFilePathMonev);
+        })
+        .then(() => {
+          console.log("Data successfully updated in REKAP.xlsx.");
+        })
+        .catch((error) => {
+          console.error("Error updating data in REKAP.xlsx:", error);
+        });
+
+      workbookKwitansiDis.xlsx
+        .readFile(sourceFilePathKwitansiDis)
+        .then(() => {
+          const worksheetKwitansiDis =
+            workbookKwitansiDis.getWorksheet("RINCIAN BPD");
+
+          worksheetKwitansiDis.getCell("A39").value = nama;
+          worksheetKwitansiDis.getCell("A40").value = "NIP." + NIP;
+
+          return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
+        })
+        .then(() => {
+          console.log("Data successfully updated in REKAP.xlsx.");
+        })
+        .catch((error) => {
+          console.error("Error updating data in REKAP.xlsx:", error);
+        });
+
+      workbookDistribusi.xlsx
+        .readFile(sourceFilePathDistribusi)
+        .then(() => {
+          const worksheetDistribusi = workbookDistribusi.getWorksheet("SURTUG");
+
+          // Assuming you have the updated data in variables nama, NIP
+          worksheetDistribusi.getCell("G50").value = nama;
+          worksheetDistribusi.getCell("G51").value = "NIP." + NIP;
+
+          return workbookDistribusi.xlsx.writeFile(sourceFilePathDistribusi);
+        })
+        .then(() => {
+          console.log("Data successfully updated in DISTRIBUSI.xlsx.");
+        })
+        .catch((error) => {
+          console.error("Error updating data in DISTRIBUSI.xlsx:", error);
+        });
+    }
     const sql = `UPDATE strukturs SET nama = ?, NIP = ? WHERE id = ?`;
 
     db.query(sql, [nama, NIP, id], (err, result) => {

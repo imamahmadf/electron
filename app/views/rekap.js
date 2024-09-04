@@ -6,7 +6,6 @@ import axios from "axios";
 import { useHistory } from "react-router-dom"; // Tambahkan ini
 
 const RekapSurat = () => {
-  const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -16,11 +15,12 @@ const RekapSurat = () => {
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState(null);
   const [jenisSPPD, setJenisSPPD] = useState(null);
-  const [pegawaiList, setPegawaiList] = useState([]);
   const [tanggalPulang, setTanggalPulang] = useState("");
   const [tanggalKeberangkatan, setTanggalKeberangkatan] = useState("");
   const [editTujuanData, setEditTujuanData] = useState(null);
   const [editTujuanMode, setEditTujuanMode] = useState(false);
+  const [pegawaiList, setPegawaiList] = useState([]);
+  const [data, setData] = useState([]);
 
   const history = useHistory(); // Tambahkan ini
   const getRekap = () => {
@@ -28,7 +28,7 @@ const RekapSurat = () => {
     const reversedData = [...data].reverse();
 
     axios
-      .post(`rekap/get`, reversedData)
+      .post(`rekap/get`, { dataKeAPI: reversedData, pegawaiList, jenisSPPD })
       .then((res) => {})
       .catch((err) => {
         console.error(err.message);
@@ -259,23 +259,9 @@ const RekapSurat = () => {
               />
             </div>
             <div>
-              {jenisSPPD?.value === 1 ? (
-                <>
-                  <Button variant="secondary" onClick={() => getRekap()}>
-                    REKAP
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="secondary"
-                    onClick={() => getRekap()}
-                    disabled
-                  >
-                    REKAP
-                  </Button>
-                </>
-              )}
+              <Button variant="secondary" onClick={() => getRekap()}>
+                REKAP
+              </Button>
               <Button variant="danger" onClick={() => hapusAll()}>
                 Hapus SPPD
               </Button>

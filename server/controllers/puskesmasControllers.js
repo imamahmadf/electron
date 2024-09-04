@@ -2,7 +2,7 @@ const { db } = require("../database");
 
 module.exports = {
   getAllPuskesmas: (req, res) => {
-    let sqlGet = `SELECT id, nama FROM puskesmas ORDER BY nama ASC`;
+    let sqlGet = `SELECT id, nama, honorDis, honorMon FROM puskesmas ORDER BY nama ASC`;
 
     db.query(sqlGet, (err, results) => {
       if (err) {
@@ -27,11 +27,11 @@ module.exports = {
 
   editPuskesmas: (req, res) => {
     console.log(req.body);
-    const { nama, id } = req.body;
+    const { nama, id, honorDis, honorMon } = req.body;
 
-    const sql = `UPDATE puskesmas SET nama = ? WHERE id = ?`;
+    const sql = `UPDATE puskesmas SET nama = ?, honorDis = ?, honorMon = ? WHERE id = ?`;
 
-    db.query(sql, [nama, id], (err, result) => {
+    db.query(sql, [nama, honorDis, honorMon, id], (err, result) => {
       if (err) {
         console.error("Error updating data in database:", err);
         return res
