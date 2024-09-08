@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
-import { Dropdown, Modal, Button } from "react-bootstrap";
+import { Dropdown, Modal, Button, Table } from "react-bootstrap";
 import Api from "../helpers/api";
 import { useHistory } from "react-router-dom";
 
@@ -55,7 +55,7 @@ const Struktur = () => {
       <div>
         <h1>PENGATURAN STRUKTUR</h1>
 
-        <table className="table table-striped table-hover">
+        <Table striped bordered hover>
           <thead>
             <tr>
               <th>No.</th>
@@ -89,7 +89,7 @@ const Struktur = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       </div>
 
       <Modal show={showEditStrukturModal} onHide={handleCloseEditStrukturModal}>

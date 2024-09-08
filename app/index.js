@@ -1,9 +1,9 @@
-import ReactDom from "react-dom";
+import { createRoot } from "react-dom/client"; // Ubah impor ini
 import Routes from "./config/routes";
 import "bootstrap/dist/css/bootstrap.min.css";
 // import { ChakraProvider } from "@chakra-ui/react";
 
-ReactDom.render(Routes, document.getElementById("app"));
+createRoot(document.getElementById("app")).render(Routes);
 
 // ReactDOM.createRoot(document.getElementById("app")).render(
 //   <ChakraProvider>

@@ -13,6 +13,7 @@ module.exports = {
       res.status(200).send(results);
     });
   },
+
   editStruktur: (req, res) => {
     console.log(req.body);
     const { nama, NIP, id } = req.body;
@@ -30,6 +31,13 @@ module.exports = {
       "KWITANSI DIS.xlsx"
     );
 
+    const sourceFilePathKwitansiMon = path.join(
+      __dirname,
+      "..",
+      "assets",
+      "KWITANSI MON.xlsx"
+    );
+
     const sourceFilePathMonev = path.join(
       __dirname,
       "..",
@@ -39,6 +47,7 @@ module.exports = {
 
     const workbookDistribusi = new Excel.Workbook();
     const workbookKwitansiDis = new Excel.Workbook();
+    const workbookKwitansiMon = new Excel.Workbook();
     const workbookMonev = new Excel.Workbook();
 
     if (id === 3) {
@@ -59,6 +68,27 @@ module.exports = {
         .catch((error) => {
           console.error(
             "Error updating data in KWITANSI DISTIRBUSI.xlsx:",
+            error
+          );
+        });
+
+      workbookKwitansiMon.xlsx
+        .readFile(sourceFilePathKwitansiMon)
+        .then(() => {
+          const worksheetKwitansiMon =
+            workbookKwitansiMon.getWorksheet("RINCIAN BPD");
+
+          worksheetKwitansiMon.getCell("B27").value = nama;
+          worksheetKwitansiMon.getCell("B28").value = "NIP." + NIP;
+
+          return workbookKwitansiMon.xlsx.writeFile(sourceFilePathKwitansiMon);
+        })
+        .then(() => {
+          console.log("Data successfully updated in KWITANSI MONITORING.xlsx.");
+        })
+        .catch((error) => {
+          console.error(
+            "Error updating data in KWITANSI MONITORING.xlsx:",
             error
           );
         });
@@ -121,6 +151,27 @@ module.exports = {
             error
           );
         });
+
+      workbookKwitansiMon.xlsx
+        .readFile(sourceFilePathKwitansiMon)
+        .then(() => {
+          const worksheetKwitansiMon =
+            workbookKwitansiMon.getWorksheet("KWIT GLOBAL");
+
+          worksheetKwitansiMon.getCell("A28").value = nama;
+          worksheetKwitansiMon.getCell("A29").value = "NIP." + NIP;
+
+          return workbookKwitansiMon.xlsx.writeFile(sourceFilePathKwitansiMon);
+        })
+        .then(() => {
+          console.log("Data successfully updated in KWITANSI MONITORING.xlsx.");
+        })
+        .catch((error) => {
+          console.error(
+            "Error updating data in KWITANSI MONITOIRNG.xlsx:",
+            error
+          );
+        });
     }
 
     if (id === 1) {
@@ -151,6 +202,24 @@ module.exports = {
           worksheetKwitansiDis.getCell("A40").value = "NIP." + NIP;
 
           return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
+        })
+        .then(() => {
+          console.log("Data successfully updated in REKAP.xlsx.");
+        })
+        .catch((error) => {
+          console.error("Error updating data in REKAP.xlsx:", error);
+        });
+
+      workbookKwitansiMon.xlsx
+        .readFile(sourceFilePathKwitansiMon)
+        .then(() => {
+          const worksheetKwitansiMon =
+            workbookKwitansiMon.getWorksheet("RINCIAN BPD");
+
+          worksheetKwitansiMon.getCell("A39").value = nama;
+          worksheetKwitansiMon.getCell("A40").value = "NIP." + NIP;
+
+          return workbookKwitansiMon.xlsx.writeFile(sourceFilePathKwitansiMon);
         })
         .then(() => {
           console.log("Data successfully updated in REKAP.xlsx.");

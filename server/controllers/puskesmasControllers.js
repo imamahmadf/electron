@@ -43,15 +43,21 @@ module.exports = {
   },
 
   postPuskesmas: (req, res) => {
-    const { nama } = req.body;
+    const { nama, honorDistribusi, honorMonitoring } = req.body;
     console.log(req.body, "NAMAA");
-    let sqlAdd = `INSERT INTO puskesmas (nama) VALUES (?)`;
-    db.query(sqlAdd, [nama], (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send("terjadi kesalahan");
+    let sqlAdd = `INSERT INTO puskesmas (nama, honorDis, honorMon) VALUES (?, ?, ?)`;
+    db.query(
+      sqlAdd,
+      [nama, honorDistribusi, honorMonitoring],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send("terjadi kesalahan");
+        }
+        res
+          .status(200)
+          .send("Data puskesmas berhasil ditambahakan ke database");
       }
-      res.status(200).send("Data puskesmas berhasil ditambahakan ke database");
-    });
+    );
   },
 };

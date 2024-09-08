@@ -17,6 +17,7 @@ const Api = {
   getStruktur: () => Axios.get(`/struktur/get`),
   editStruktur: (data) => Axios.post(`/struktur/edit-kepala`, data),
   gantiTujuanPuskesmas: (data) => Axios.post(`surat/edit-puskesmas`, data),
+  editPuskesmas: (data) => Axios.patch(`puskesmas/edit`, data),
 };
 
 export default Api;

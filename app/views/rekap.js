@@ -23,6 +23,7 @@ const RekapSurat = () => {
   const [data, setData] = useState([]);
 
   const history = useHistory(); // Tambahkan ini
+
   const getRekap = () => {
     // Reverse the order of data before sending to the API
     const reversedData = [...data].reverse();
@@ -48,10 +49,9 @@ const RekapSurat = () => {
     axios
       .post(`/rekap/delete/all`)
       .then((res) => {
-        setShowDeleteModal(true); // Menampilkan modal konfirmasi hapus semua data
-        setTimeout(() => {
-          history.push("/"); // Redirect ke halaman awal setelah beberapa detik
-        }, 3000); // Misalnya, tunggu 3 detik sebelum redirect
+        // Menampilkan modal konfirmasi hapus semua data
+
+        history.push("/"); // Redirect ke halaman awal setelah beberapa detik
       })
       .catch((err) => {
         console.log("Gagal menghapus semua perjalanan");
@@ -117,7 +117,7 @@ const RekapSurat = () => {
   };
 
   const printKwitansi = async () => {
-    console.log("SSSSS");
+    console.log(printKwitansiData, "ini yg mau di print");
     try {
       const dataToSend = {
         nomorSuratSPD: printKwitansiData.nomorSuratSPD,
@@ -127,7 +127,12 @@ const RekapSurat = () => {
         pegawai2NIP: JSON.parse(printKwitansiData.pegawai2).NIP,
         pegawai3Nama: JSON.parse(printKwitansiData.pegawai3).nama,
         pegawai3NIP: JSON.parse(printKwitansiData.pegawai3).NIP,
+        pegawai4Nama: JSON.parse(printKwitansiData.pegawai4).nama,
+        pegawai4NIP: JSON.parse(printKwitansiData.pegawai4).NIP,
         puskesmas: JSON.parse(printKwitansiData.puskesmasId),
+        tipe: printKwitansiData.tipe,
+        keberangkatan: printKwitansiData.keberangkatan,
+        pulang: printKwitansiData.pulang,
       };
 
       // Send data to the backend API for printing kwitansi
@@ -262,7 +267,7 @@ const RekapSurat = () => {
               <Button variant="secondary" onClick={() => getRekap()}>
                 REKAP
               </Button>
-              <Button variant="danger" onClick={() => hapusAll()}>
+              <Button variant="danger" onClick={() => setShowDeleteModal(true)}>
                 Hapus SPPD
               </Button>
             </div>
@@ -388,7 +393,7 @@ const RekapSurat = () => {
             <p>Apakah Anda yakin ingin menghapus data ini?</p>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="danger" onClick={confirmDelete}>
+            <Button variant="danger" onClick={hapusAll}>
               Hapus
             </Button>
             <Button

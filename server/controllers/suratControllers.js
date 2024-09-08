@@ -97,9 +97,10 @@ module.exports = {
         worksheet.getCell("G32").value = pegawai4.NIP; // pegawai3 NIP
         worksheet.getCell("G33").value = pegawai4.jabatan; // pegawai3 jabatan
 
-        worksheet.getCell("G39").value = puskesmas.label; // pegawai3 jabatan
+        worksheet.getCell("G43").value = puskesmas.label; // pegawai3 jabatan
 
-        worksheet.getCell("G40").value = formattedKeberangkatan; // tanggalKeberangkatan
+        worksheet.getCell("G36").value = formattedKeberangkatan; // tanggalKeberangkatan
+        worksheet.getCell("G37").value = formattedPulang; // tanggalPulang
         // worksheet.getCell("G36").value = formattedPulang; // tanggalPulang
 
         worksheet.getCell("G9").value = generateNomorSurat(
@@ -131,11 +132,11 @@ module.exports = {
         worksheet.getCell("G27").value = pegawai3.golongan; // pegawai3 golongan
         worksheet.getCell("G28").value = pegawai3.NIP; // pegawai3 NIP
         worksheet.getCell("G29").value = pegawai3.jabatan; // pegawai3 jabatan
-        worksheet.getCell("G41").value = puskesmas.label; // pegawai3 jabatan
+        worksheet.getCell("G38").value = puskesmas.label; // pegawai3 jabatan
         // Format tanggal ke format "DD MMMM YYYY"
 
-        worksheet.getCell("G35").value = formattedKeberangkatan; // tanggalKeberangkatan
-        worksheet.getCell("G36").value = formattedPulang; // tanggalPulang
+        worksheet.getCell("G32").value = formattedKeberangkatan; // tanggalKeberangkatan
+        worksheet.getCell("G33").value = formattedPulang; // tanggalPulang
 
         worksheet.getCell("G9").value = generateNomorSurat(
           keberangkatan,
@@ -210,35 +211,27 @@ module.exports = {
     if (pegawai == "undefined" && tipe == "undefined") {
       if (keberangkatan !== "" && pulang !== "") {
         whereClause = `WHERE keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
-        console.log("AAAAAAAAAAA 1111111");
       } else {
         whereClause = "";
-        console.log("BBBBBBBBBB 111111111");
       }
     } else if (pegawai !== "undefined" && tipe == "undefined") {
       if (keberangkatan && pulang) {
         whereClause = `WHERE (pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
-        console.log("AAAAAAAAAAA 2222222");
       } else {
         whereClause =
           "WHERE (pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?)";
-        console.log("BBBBBBBBBB 222222222");
       }
     } else if (pegawai !== "undefined" && tipe !== "undefined") {
       if (keberangkatan && pulang) {
         whereClause = `WHERE ((pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.tipe = ${tipe}) AND keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
-        console.log("AAAAAAAAAAA 3333333");
       } else {
         whereClause = `WHERE ((pegawai1.id = ? OR pegawai2.id = ? OR pegawai3.id = ? OR pegawai4.id = ?) AND keberangkatans.tipe = ${tipe})`;
-        console.log("BBBBBBBBBB 33333333");
       }
     } else if (pegawai == "undefined" && tipe !== "undefined") {
       if (keberangkatan && pulang) {
         whereClause = `WHERE (keberangkatans.tipe = '${tipe}') AND keberangkatans.keberangkatan >= '${keberangkatan}' AND keberangkatans.pulang <= '${pulang}'`;
-        console.log("AAAAAAAAAAA 444444");
       } else {
         whereClause = `WHERE (keberangkatans.tipe = '${tipe}')`;
-        console.log("BBBBBBBBBB 444444");
       }
     }
 
@@ -247,7 +240,7 @@ module.exports = {
     JSON_OBJECT('id', pegawai2.id, 'nama', pegawai2.nama, 'NIP', pegawai2.NIP, 'jabatan', pegawai2.jabatan, 'golongan', pegawai2.golongan) AS pegawai2,
     JSON_OBJECT('id', pegawai3.id, 'nama', pegawai3.nama, 'NIP', pegawai3.NIP, 'jabatan', pegawai3.jabatan, 'golongan', pegawai3.golongan) AS pegawai3,
     JSON_OBJECT('id', pegawai4.id, 'nama', pegawai4.nama, 'NIP', pegawai4.NIP, 'jabatan', pegawai4.jabatan, 'golongan', pegawai4.golongan) AS pegawai4,
-    JSON_OBJECT('id', puskesmas.id, 'nama', puskesmas.nama) AS puskesmasId
+    JSON_OBJECT('id', puskesmas.id, 'nama', puskesmas.nama, 'honorDis', puskesmas.honorDis, 'honorMon', puskesmas.honorMon) AS puskesmasId
     FROM keberangkatans
     LEFT JOIN pegawais AS pegawai1 ON keberangkatans.pegawai1Id = pegawai1.id
     LEFT JOIN pegawais AS pegawai2 ON keberangkatans.pegawai2Id = pegawai2.id
@@ -257,7 +250,6 @@ module.exports = {
     ${whereClause}
     ORDER BY keberangkatans.keberangkatan DESC`;
 
-    console.log(sql);
     db.query(sql, [pegawai, pegawai, pegawai, pegawai], (err, result) => {
       if (err) {
         console.error("Error fetching data from database:", err);
@@ -283,6 +275,19 @@ module.exports = {
     });
   },
   printKwitansi: async (req, res) => {
+    const calculateDaysDifference = (startDate, endDate) => {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const millisecondsPerDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+      const difference = Math.abs(end - start);
+      return Math.round(difference / millisecondsPerDay) + 1; // Adding 1 to include both start and end dates
+    };
+
+    const generateTahun = (tahun) => {
+      const date = new Date(tahun);
+      const year = date.getFullYear().toString();
+      return year;
+    };
     const {
       nomorSuratSPD,
       pegawai1Nama,
@@ -290,41 +295,67 @@ module.exports = {
       pegawai2Nama,
       pegawai2NIP,
       pegawai3Nama,
+      pegawai4NIP,
+      pegawai4Nama,
       pegawai3NIP,
+      puskesmas,
+      tipe,
+      keberangkatan,
+      pulang,
     } = req.body;
 
     console.log(req.body);
-
+    const formatDate = (dateString) => {
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      const date = new Date(dateString);
+      return date.toLocaleDateString("id-ID", options);
+    };
     try {
       const sourceFilePath = path.join(
         __dirname,
         "..",
         "assets",
-        "KWITANSI.xlsx"
+        tipe == 1 ? "KWITANSI DIS.xlsx" : "KWITANSI MON.xlsx"
       );
-
-      console.log("File path:", sourceFilePath); // Log file path
+      const daysDifference = calculateDaysDifference(keberangkatan, pulang);
       const downloadPath = app.getPath("downloads");
-      const newFileName = `KWITANSI${Date.now()}.xlsx`;
+      const newFileName = `${
+        tipe == 1 ? "KWITANSI_DISTRIBUSI" : "KWITANSI_MONITORING"
+      }${Date.now()}.xlsx`;
       const newFilePath = path.join(downloadPath, newFileName);
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(sourceFilePath);
 
-      const worksheet = workbook.getWorksheet("1. Rincian BPD");
-      if (!worksheet) {
-        throw new Error("Worksheet 'SURTUG' tidak ditemukan.");
+      const worksheet1 = workbook.getWorksheet("RINCIAN BPD");
+      const worksheet2 = workbook.getWorksheet("RINCIAN BPD (2)");
+      const worksheet3 = workbook.getWorksheet("RINCIAN BPD (3)");
+      if (tipe == 2) {
+        const worksheet4 = workbook.getWorksheet("RINCIAN BPD (4)");
+        worksheet4.getCell("I27").value = pegawai4Nama;
+        worksheet4.getCell("I28").value = pegawai4NIP;
+        worksheet1.getCell("A1").value = daysDifference;
+        console.log("YAAAAAAAAAAAA");
       }
-
-      worksheet.getCell("F5").value = nomorSuratSPD;
-      worksheet.getCell("AA1").value = pegawai1Nama;
-      worksheet.getCell("AA2").value = pegawai1NIP;
-      worksheet.getCell("AA3").value = pegawai2Nama;
-      worksheet.getCell("AA4").value = pegawai2NIP;
-      worksheet.getCell("AA5").value = pegawai3Nama;
-      worksheet.getCell("AA6").value = pegawai3NIP;
+      const worksheetKwit = workbook.getWorksheet("KWIT GLOBAL");
+      worksheetKwit.getCell("I2").value = generateTahun(keberangkatan);
+      worksheet1.getCell("G11").value =
+        tipe == 1 ? puskesmas.honorDis : puskesmas.honorMon;
+      worksheet1.getCell("D11").value = daysDifference;
+      worksheet1.getCell("F6").value = formatDate(keberangkatan);
+      worksheet1.getCell("F5").value = nomorSuratSPD;
+      worksheet1.getCell("I27").value = pegawai1Nama;
+      worksheet1.getCell("I28").value = pegawai1NIP;
+      worksheet2.getCell("I27").value = pegawai2Nama;
+      worksheet2.getCell("I28").value = pegawai2NIP;
+      worksheet3.getCell("I27").value = pegawai3Nama;
+      worksheet3.getCell("I28").value = pegawai3NIP;
+      worksheetKwit.getCell(
+        "D17"
+      ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
 
       // Simpan perubahan ke file baru
       await workbook.xlsx.writeFile(newFilePath);
+      return res.status(200).send("Data berhasil di cetak");
     } catch (error) {
       console.error("Error handling post request:", error);
       res.status(500).send("Terjadi kesalahan saat menangani permintaan.");

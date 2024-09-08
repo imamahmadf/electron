@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
-import { Dropdown, Modal, Button } from "react-bootstrap";
+import { Dropdown, Modal, Button, Table } from "react-bootstrap";
 import Api from "../helpers/api";
 import { useHistory } from "react-router-dom";
 import PengaturanPuskesmas from "../components/pengaturanPuskesmas";
@@ -145,9 +145,10 @@ const Pengaturan = () => {
               >
                 Tambah Pegawai
               </button>
-              <table className="table table-striped table-hover">
+              <Table striped bordered hover>
                 <thead>
                   <tr>
+                    <th>No.</th>
                     <th>Nama</th>
                     <th>Jabatan</th>
                     <th>NIP</th>
@@ -156,8 +157,9 @@ const Pengaturan = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {pegawaiData.map((pegawai) => (
+                  {pegawaiData.map((pegawai, idx) => (
                     <tr key={pegawai.id}>
+                      <th>{idx + 1}</th>
                       <td>{pegawai.nama}</td>
                       <td>{pegawai.jabatan}</td>
                       <td>{pegawai.NIP}</td>
@@ -189,7 +191,7 @@ const Pengaturan = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </Table>
             </div>
           </div>
           <div

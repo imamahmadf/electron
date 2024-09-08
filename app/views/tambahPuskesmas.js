@@ -5,6 +5,8 @@ import { useHistory } from "react-router-dom"; // Tambahkan ini
 
 const tambahPuskesmas = () => {
   const [nama, setNama] = useState("");
+  const [honorDistribusi, setHonorDistribusi] = useState(0); // Tambahkan state honorDistribusi
+  const [honorMonitoring, setHonorMonitoring] = useState(0); // Tambahkan state honorMonitoring
 
   const [showModal, setShowModal] = useState(false); // Tambahkan state modal
   const [isDisabled, setIsDisabled] = useState(true);
@@ -47,9 +49,31 @@ const tambahPuskesmas = () => {
           </div>
 
           <div className="col">
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Number 1"
+              value={honorDistribusi}
+              onChange={(e) => setHonorDistribusi(parseInt(e.target.value))}
+            />
+          </div>
+
+          <div className="col">
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Number 2"
+              value={honorMonitoring}
+              onChange={(e) => setHonorMonitoring(parseInt(e.target.value))}
+            />
+          </div>
+
+          <div className="col">
             <button
               className="btn btn-primary"
-              onClick={() => sendDataToApi({ nama })}
+              onClick={() =>
+                sendDataToApi({ nama, honorDistribusi, honorMonitoring })
+              } // Tambahkan number1 dan number2 ke dalam objek
               disabled={isDisabled}
             >
               Tambah

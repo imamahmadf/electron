@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
-import { Dropdown, Modal, Button } from "react-bootstrap";
+import { Dropdown, Modal, Button, Table } from "react-bootstrap";
 import Api from "../helpers/api";
 import { useHistory } from "react-router-dom";
 
@@ -67,7 +67,7 @@ const PengaturanPuskesmas = () => {
   };
 
   const simpanPerubahanData = () => {
-    Api.simpanPerubahanPegawai(editPuskesmasData)
+    Api.editPuskesmas(editPuskesmasData)
       .then((response) => {
         console.log("Data puskesmas berhasil diubah");
         setShowSuccessModal(true); // Tambahkan state untuk menampilkan modal sukses
@@ -90,7 +90,7 @@ const PengaturanPuskesmas = () => {
         >
           Tambah Puskesmas
         </button>
-        <table className="table table-striped table-hover">
+        <Table striped bordered hover>
           <thead>
             <tr>
               <th>No.</th>
@@ -105,8 +105,20 @@ const PengaturanPuskesmas = () => {
               <tr key={val.id}>
                 <td>{index + 1}</td>
                 <td>{val.nama}</td>
-                <td>{val.honorDis}</td>
-                <td>{val.honorMon}</td>
+                <td>
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                  }).format(val.honorDis)}
+                </td>
+                <td>
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                  }).format(val.honorMon)}
+                </td>
                 <td>
                   <Dropdown>
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
@@ -131,7 +143,7 @@ const PengaturanPuskesmas = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       </div>
       <Modal
         show={showEditPuskesmasModal}
