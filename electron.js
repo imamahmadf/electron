@@ -9,7 +9,13 @@ const url = require("url");
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({ width: 1200, height: 800 });
+  mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    // webPreferences: { devTools: false
+
+    // },
+  });
 
   mainWindow.loadURL("http://localhost:5000/");
   // mainWindow.loadURL(url.format({

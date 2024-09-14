@@ -4,6 +4,24 @@ const ExcelJS = require("exceljs");
 const { app } = require("electron");
 const { format, parseISO } = require("date-fns");
 
+function toRoman(num) {
+  const romanNumerals = {
+    1: "I",
+    2: "II",
+    3: "III",
+    4: "IV",
+    5: "V",
+    6: "VI",
+    7: "VII",
+    8: "VIII",
+    9: "IX",
+    10: "X",
+    // tambahkan angka Romawi lainnya sesuai kebutuhan
+  };
+
+  return romanNumerals[num];
+}
+
 module.exports = {
   handlePost: async (req, res) => {
     try {
@@ -56,19 +74,25 @@ module.exports = {
 
       function generateNomorSurat(Keberangkatan, jenisSurat) {
         const date = new Date(keberangkatan);
-        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const month = toRoman(date.getMonth() + 1); // Mengubah bulan ke angka romawi
         const year = date.getFullYear().toString();
 
         let nomorSurat = "";
         switch (jenisSurat) {
           case "tugas":
-            nomorSurat = `090.1/     /ST-POA/${month}/${year}`;
+            nomorSurat = `090.1/     /ST-POA/${toRoman(
+              parseInt(month)
+            )}/${year}`; // Mengubah bulan ke angka romawi
             break;
           case "nota dinas":
-            nomorSurat = `440/      /ND-POA/${month}/${year}`;
+            nomorSurat = `440/      /ND-POA/${toRoman(
+              parseInt(month)
+            )}/${year}`; // Mengubah bulan ke angka romawi
             break;
           case "SPD":
-            nomorSurat = `094/         /SPD-POA/${month}/${year}`;
+            nomorSurat = `094/         /SPD-POA/${toRoman(
+              parseInt(month)
+            )}/${year}`; // Mengubah bulan ke angka romawi
             break;
           default:
             nomorSurat = "Nomor surat tidak valid";

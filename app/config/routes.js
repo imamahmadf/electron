@@ -9,6 +9,7 @@ import Rekap from "../views/rekap";
 import Pengaturan from "../views/pengaturan";
 import "../styles/main.css";
 import TambahPegawai from "../views/tambahPegawai";
+import Welcome from "../views/welcome";
 
 import tambahPuskesmas from "../views/tambahPuskesmas";
 const history = createBrowserHistory();
@@ -17,7 +18,8 @@ const Routes = (
   <Router history={history}>
     <div>
       <Navbar />
-      <Route path="/" exact component={Home} />
+      <Route path="/" exact component={Welcome} />
+      <Route path="/home" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/rekap" component={Rekap} />
       <Route path="/pengaturan" component={Pengaturan} />
