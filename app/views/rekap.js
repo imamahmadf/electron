@@ -10,6 +10,7 @@ const RekapSurat = () => {
   const [selectedData, setSelectedData] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPrintKwitansi, setShowPrintKwitansi] = useState(false);
+  const [showDeleteSatuModal, setShowDeleteSatuModal] = useState(false);
   const [printKwitansiData, setPrintKwitansiData] = useState({});
   const [deleteId, setDeleteId] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -99,7 +100,7 @@ const RekapSurat = () => {
 
   const handleDelete = async (id) => {
     setDeleteId(id);
-    setShowDeleteModal(true);
+    setShowDeleteSatuModal(true);
   };
 
   const handlePrintKwitansi = async (data) => {
@@ -110,7 +111,7 @@ const RekapSurat = () => {
     try {
       await Api.hapusSurat(deleteId);
       setData(data.filter((item) => item.id !== deleteId));
-      setShowDeleteModal(false);
+      setShowDeleteSatuModal(false);
     } catch (error) {
       console.error("Error deleting data: ", error);
     }
@@ -390,10 +391,33 @@ const RekapSurat = () => {
             <Modal.Title>Konfirmasi Hapus Data</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>Apakah Anda yakin ingin menghapus data ini?</p>
+            <p>Apakah Anda yakin ingin menghapus SEMUA DATA PERJALANAN?</p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="danger" onClick={hapusAll}>
+              Hapus
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Batal
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* ///delete 1 data ///////// */}
+        <Modal
+          show={showDeleteSatuModal}
+          onHide={() => setShowDeleteSatuModal(false)}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Konfirmasi Hapus 1 data</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Apakah Anda yakin ingin menghapus DATA PERJALANAN INI?</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="danger" onClick={confirmDelete}>
               Hapus
             </Button>
             <Button
