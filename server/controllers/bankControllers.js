@@ -37,8 +37,22 @@ module.exports = {
         .then(() => {
           const worksheetDistribusi =
             workbookDistribusi.getWorksheet("NOTA DINAS");
+          const worksheetDistribusiSPD = workbookDistribusi.getWorksheet("SPD");
+          const worksheetDistribusiSPD2 =
+            workbookDistribusi.getWorksheet("SPD (2)");
+          const worksheetDistribusiSPD3 =
+            workbookDistribusi.getWorksheet("SPD (3)");
 
           worksheetDistribusi.getCell("H42").value = rekening;
+          worksheetDistribusi.getCell("T42").value = rekening;
+          worksheetDistribusiSPD.getCell("E30").value = rekening;
+          worksheetDistribusiSPD.getCell("P30").value = rekening;
+
+          worksheetDistribusiSPD2.getCell("E30").value = rekening;
+          worksheetDistribusiSPD2.getCell("P30").value = rekening;
+
+          worksheetDistribusiSPD3.getCell("E30").value = rekening;
+          worksheetDistribusiSPD3.getCell("P30").value = rekening;
 
           return workbookDistribusi.xlsx.writeFile(sourceFilePathDistribusi);
         })
@@ -54,8 +68,19 @@ module.exports = {
         .then(() => {
           const worksheetKwitansiDis =
             workbookKwitansiDis.getWorksheet("KWIT GLOBAL");
+          const worksheetKwitansiDis2 =
+            workbookKwitansiDis.getWorksheet("KWIT GLOBAL (2)");
+          const worksheetKwitansiDis3 =
+            workbookKwitansiDis.getWorksheet("KWIT GLOBAL (3)");
 
           worksheetKwitansiDis.getCell("I3").value = rekening;
+          worksheetKwitansiDis.getCell("V3").value = rekening;
+
+          worksheetKwitansiDis2.getCell("I3").value = rekening;
+          worksheetKwitansiDis2.getCell("V3").value = rekening;
+
+          worksheetKwitansiDis3.getCell("I3").value = rekening;
+          worksheetKwitansiDis3.getCell("V3").value = rekening;
 
           return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
         })
@@ -83,8 +108,25 @@ module.exports = {
         .readFile(sourceFilePathMonev)
         .then(() => {
           const worksheetMonev = workbookMonev.getWorksheet("NOTA DINAS");
+          const worksheetMonevSPD = workbookMonev.getWorksheet("SPD");
+          const worksheetMonevSPD2 = workbookMonev.getWorksheet("SPD (2)");
+          const worksheetMonevSPD3 = workbookMonev.getWorksheet("SPD (3)");
+          const worksheetMonevSPD4 = workbookMonev.getWorksheet("SPD (4)");
 
           worksheetMonev.getCell("H42").value = rekening;
+          worksheetMonev.getCell("T42").value = rekening;
+
+          worksheetMonevSPD.getCell("E30").value = rekening;
+          worksheetMonevSPD.getCell("P30").value = rekening;
+
+          worksheetMonevSPD2.getCell("E30").value = rekening;
+          worksheetMonevSPD2.getCell("P30").value = rekening;
+
+          worksheetMonevSPD3.getCell("E30").value = rekening;
+          worksheetMonevSPD3.getCell("P30").value = rekening;
+
+          worksheetMonevSPD4.getCell("E30").value = rekening;
+          worksheetMonevSPD4.getCell("P30").value = rekening;
 
           return workbookMonev.xlsx.writeFile(sourceFilePathMonev);
         })

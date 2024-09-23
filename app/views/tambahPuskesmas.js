@@ -7,6 +7,7 @@ const tambahPuskesmas = () => {
   const [nama, setNama] = useState("");
   const [honorDistribusi, setHonorDistribusi] = useState(0); // Tambahkan state honorDistribusi
   const [honorMonitoring, setHonorMonitoring] = useState(0); // Tambahkan state honorMonitoring
+  const [honorTransport, setHonorTransport] = useState(0);
 
   const [showModal, setShowModal] = useState(false); // Tambahkan state modal
   const [isDisabled, setIsDisabled] = useState(true);
@@ -35,10 +36,11 @@ const tambahPuskesmas = () => {
 
   return (
     <>
-      <div className="container">
-        <h1 className="mt-5">Tambah Puskesmas</h1>
+      <div className="container my-5 pb-5 h-100vh">
+        <h1 className="mt-5 pt-5">Tambah Puskesmas</h1>
         <div className="row mt-3">
           <div className="col">
+            <label>Nama Puskesmas</label>
             <input
               type="text"
               className="form-control"
@@ -49,6 +51,7 @@ const tambahPuskesmas = () => {
           </div>
 
           <div className="col">
+            <label>uang harian Distribusi</label>
             <input
               type="number"
               className="form-control"
@@ -59,6 +62,7 @@ const tambahPuskesmas = () => {
           </div>
 
           <div className="col">
+            <label>Uang Harian Monev</label>
             <input
               type="number"
               className="form-control"
@@ -67,12 +71,27 @@ const tambahPuskesmas = () => {
               onChange={(e) => setHonorMonitoring(parseInt(e.target.value))}
             />
           </div>
+          <div className="col">
+            <label>Uang transport</label>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Number 2"
+              value={honorMonitoring}
+              onChange={(e) => setHonorTransport(parseInt(e.target.value))}
+            />
+          </div>
 
           <div className="col">
             <button
-              className="btn btn-primary"
+              className="btn btn-primary mt-3"
               onClick={() =>
-                sendDataToApi({ nama, honorDistribusi, honorMonitoring })
+                sendDataToApi({
+                  nama,
+                  honorDistribusi,
+                  honorMonitoring,
+                  honorTransport,
+                })
               } // Tambahkan number1 dan number2 ke dalam objek
               disabled={isDisabled}
             >

@@ -97,6 +97,7 @@ const PengaturanPuskesmas = () => {
               <th>Nama</th>
               <th>Honor Distirbusi</th>
               <th>Honor Monitoring</th>
+              <th>Honor Transport</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -118,6 +119,13 @@ const PengaturanPuskesmas = () => {
                     currency: "IDR",
                     minimumFractionDigits: 0,
                   }).format(val.honorMon)}
+                </td>
+                <td>
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                  }).format(val.honorMonTran)}
                 </td>
                 <td>
                   <Dropdown>
@@ -193,6 +201,20 @@ const PengaturanPuskesmas = () => {
                 setEditPuskesmasData({
                   ...editPuskesmasData,
                   honorMon: e.target.value,
+                })
+              }
+            />
+          </div>
+          <div className="form-group">
+            <label>Honor Transport</label>
+            <input
+              type="number"
+              className="form-control"
+              value={editPuskesmasData.honorMonTran}
+              onChange={(e) =>
+                setEditPuskesmasData({
+                  ...editPuskesmasData,
+                  honorMonTran: e.target.value,
                 })
               }
             />

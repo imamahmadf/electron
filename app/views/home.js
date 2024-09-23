@@ -181,7 +181,7 @@ const Home = () => {
             loadOptions={loadJenisSPPDOptions}
             defaultOptions
             onChange={setJenisSPPD} // Simpan puskesmas yang dipilih
-            placeholder="Cari Puskesmas"
+            placeholder="Pilih SPPD"
           />
         </div>
       </div>

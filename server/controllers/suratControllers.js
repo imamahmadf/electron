@@ -3,7 +3,7 @@ const path = require("path");
 const ExcelJS = require("exceljs");
 const { app } = require("electron");
 const { format, parseISO } = require("date-fns");
-
+const { id } = require("date-fns/locale");
 module.exports = {
   handlePost: async (req, res) => {
     try {
@@ -55,9 +55,14 @@ module.exports = {
 
       const formattedKeberangkatan = format(
         parseISO(keberangkatan),
-        "d MMMM yyyy"
+        "d MMMM yyyy",
+        { locale: id } // Menggunakan locale Indonesia
       );
-      const formattedPulang = format(parseISO(pulang), "d MMMM yyyy");
+      const formattedPulang = format(
+        parseISO(pulang),
+        "d MMMM yyyy",
+        { locale: id } // Menggunakan locale Indonesia
+      );
 
       function generateNomorSurat(Keberangkatan, jenisSurat) {
         const date = new Date(Keberangkatan);
@@ -100,6 +105,46 @@ module.exports = {
 
         return nomorSurat;
       }
+
+      function terbilang(angka) {
+        const satuan = [
+          "",
+          "Satu",
+          "Dua",
+          "Tiga",
+          "Empat",
+          "Lima",
+          "Enam",
+          "Tujuh",
+          "Delapan",
+          "Sembilan",
+          "Sepuluh",
+          "Sebelas",
+        ];
+
+        if (angka < 12) {
+          return satuan[angka];
+        } else if (angka < 20) {
+          return terbilang(angka - 10) + " Belas";
+        } else if (angka < 100) {
+          return (
+            terbilang(Math.floor(angka / 10)) +
+            " Puluh " +
+            terbilang(angka % 10)
+          );
+        } else if (angka < 200) {
+          return "Seratus " + terbilang(angka - 100);
+        }
+      }
+      const calculateDaysDifference = (startDate, endDate) => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const millisecondsPerDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+        const difference = Math.abs(end - start);
+        return Math.round(difference / millisecondsPerDay) + 1; // Adding 1 to include both start and end dates
+      };
+
+      const daysDifference = calculateDaysDifference(keberangkatan, pulang);
       if (tipe == 2) {
         worksheetSURTUG.getCell("G15").value = pegawai1.label; // pegawai1 label
         worksheetSURTUG.getCell("G16").value = pegawai1.golongan; // pegawai1 golongan
@@ -122,7 +167,12 @@ module.exports = {
         worksheetSURTUG.getCell("G33").value = pegawai4.jabatan; // pegawai3 jabatan
 
         worksheetSURTUG.getCell("G43").value = puskesmas.label; // pegawai3 jabatan
-
+        worksheetSURTUG.getCell("G35").value = `${daysDifference} (${terbilang(
+          daysDifference
+        )}) hari`;
+        worksheetSURTUG.getCell("R35").value = `${daysDifference} (${terbilang(
+          daysDifference
+        )}) hari`;
         worksheetSURTUG.getCell("G36").value = formattedKeberangkatan; // tanggalKeberangkatan
         worksheetSURTUG.getCell("G37").value = formattedPulang; // tanggalPulang
         // worksheetSURTUG.getCell("G36").value = formattedPulang; // tanggalPulang
@@ -184,6 +234,9 @@ module.exports = {
           keberangkatan,
           "nota dinas"
         );
+        worksheetNOTADINAS.getCell(
+          "F39"
+        ).value = `${daysDifference} (${terbilang(daysDifference)}) hari`;
         worksheetNOTADINAS.getCell("F44").value = puskesmas.label;
         worksheetNOTADINAS.getCell("F30").value = pegawai1.label;
         worksheetNOTADINAS.getCell("F31").value = pegawai1.jabatan;
@@ -199,6 +252,9 @@ module.exports = {
           keberangkatan,
           "nota dinas"
         );
+        worksheetNOTADINAS.getCell(
+          "R39"
+        ).value = `${daysDifference} (${terbilang(daysDifference)}) hari`;
         worksheetNOTADINAS.getCell("R44").value = puskesmas.label;
         worksheetNOTADINAS.getCell("R30").value = pegawai1.label;
         worksheetNOTADINAS.getCell("R31").value = pegawai1.jabatan;
@@ -217,6 +273,9 @@ module.exports = {
         worksheetSPD4.getCell("F16").value = pegawai4.golongan;
         worksheetSPD4.getCell("F17").value = pegawai4.jabatan;
         worksheetSPD4.getCell("E23").value = puskesmas.label;
+        worksheetSPD4.getCell("E24").value = `${daysDifference} (${terbilang(
+          daysDifference
+        )}) hari`;
         worksheetSPD4.getCell("E25").value = formattedKeberangkatan;
         worksheetSPD4.getCell("E26").value = formattedPulang;
         worksheetSPD4.getCell("H34").value = formattedKeberangkatan;
@@ -229,6 +288,9 @@ module.exports = {
         worksheetSPD4.getCell("Q16").value = pegawai4.golongan;
         worksheetSPD4.getCell("Q17").value = pegawai4.jabatan;
         worksheetSPD4.getCell("P23").value = puskesmas.label;
+        worksheetSPD4.getCell("P24").value = `${daysDifference} (${terbilang(
+          daysDifference
+        )}) hari`;
         worksheetSPD4.getCell("P25").value = formattedKeberangkatan;
         worksheetSPD4.getCell("P26").value = formattedPulang;
         worksheetSPD4.getCell("S34").value = formattedKeberangkatan;
@@ -268,7 +330,12 @@ module.exports = {
         worksheetSURTUG.getCell("G29").value = pegawai3.jabatan; // pegawai3 jabatan
         worksheetSURTUG.getCell("G38").value = puskesmas.label; // pegawai3 jabatan
         // Format tanggal ke format "DD MMMM YYYY"
-
+        worksheetSURTUG.getCell("G31").value = `${daysDifference} (${terbilang(
+          daysDifference
+        )}) hari`;
+        worksheetSURTUG.getCell("R31").value = `${daysDifference} (${terbilang(
+          daysDifference
+        )}) hari`;
         worksheetSURTUG.getCell("G32").value = formattedKeberangkatan; // tanggalKeberangkatan
         worksheetSURTUG.getCell("G12").value = formattedKeberangkatan; // tanggalKeberangkatan
         worksheetSURTUG.getCell("J42").value = formattedKeberangkatan; // tanggalKeberangkatan
@@ -297,6 +364,9 @@ module.exports = {
         worksheetNOTADINAS.getCell("F36").value = pegawai3.label;
         worksheetNOTADINAS.getCell("F37").value = pegawai3.NIP;
         worksheetNOTADINAS.getCell("F44").value = puskesmas.label;
+        worksheetNOTADINAS.getCell(
+          "F39"
+        ).value = `${daysDifference} (${terbilang(daysDifference)}) hari`;
 
         worksheetSURTUG.getCell("R16").value = pegawai1.label; // pegawai1 label
         worksheetSURTUG.getCell("R17").value = pegawai1.golongan; // pegawai1 golongan
@@ -343,6 +413,9 @@ module.exports = {
         worksheetNOTADINAS.getCell("R36").value = pegawai3.label;
         worksheetNOTADINAS.getCell("R37").value = pegawai3.NIP;
         worksheetNOTADINAS.getCell("R44").value = puskesmas.label;
+        worksheetNOTADINAS.getCell(
+          "R39"
+        ).value = `${daysDifference} (${terbilang(daysDifference)}) hari`;
         worksheetLAP.getCell("F20").value = puskesmas.label;
         worksheetLAP.getCell("F21").value = formattedKeberangkatan;
         worksheetLAP.getCell("R20").value = puskesmas.label;
@@ -436,6 +509,9 @@ module.exports = {
       worksheetSPD1.getCell("F16").value = pegawai1.golongan;
       worksheetSPD1.getCell("F17").value = pegawai1.jabatan;
       worksheetSPD1.getCell("E23").value = puskesmas.label;
+      worksheetSPD1.getCell("E24").value = `${daysDifference} (${terbilang(
+        daysDifference
+      )}) hari`;
       worksheetSPD1.getCell("E25").value = formattedKeberangkatan;
       worksheetSPD1.getCell("E26").value = formattedPulang;
       worksheetSPD1.getCell("H34").value = formattedKeberangkatan;
@@ -448,6 +524,9 @@ module.exports = {
       worksheetSPD1.getCell("Q16").value = pegawai1.golongan;
       worksheetSPD1.getCell("Q17").value = pegawai1.jabatan;
       worksheetSPD1.getCell("P23").value = puskesmas.label;
+      worksheetSPD1.getCell("P24").value = `${daysDifference} (${terbilang(
+        daysDifference
+      )}) hari`;
       worksheetSPD1.getCell("P25").value = formattedKeberangkatan;
       worksheetSPD1.getCell("P26").value = formattedPulang;
       worksheetSPD1.getCell("S34").value = formattedKeberangkatan;
@@ -460,6 +539,9 @@ module.exports = {
       worksheetSPD2.getCell("F16").value = pegawai2.golongan;
       worksheetSPD2.getCell("F17").value = pegawai2.jabatan;
       worksheetSPD2.getCell("E23").value = puskesmas.label;
+      worksheetSPD2.getCell("E24").value = `${daysDifference} (${terbilang(
+        daysDifference
+      )}) hari`;
       worksheetSPD2.getCell("E25").value = formattedKeberangkatan;
       worksheetSPD2.getCell("E26").value = formattedPulang;
       worksheetSPD2.getCell("H34").value = formattedKeberangkatan;
@@ -472,6 +554,9 @@ module.exports = {
       worksheetSPD2.getCell("Q16").value = pegawai2.golongan;
       worksheetSPD2.getCell("Q17").value = pegawai2.jabatan;
       worksheetSPD2.getCell("P23").value = puskesmas.label;
+      worksheetSPD2.getCell("P24").value = `${daysDifference} (${terbilang(
+        daysDifference
+      )}) hari`;
       worksheetSPD2.getCell("P25").value = formattedKeberangkatan;
       worksheetSPD2.getCell("P26").value = formattedPulang;
       worksheetSPD2.getCell("S34").value = formattedKeberangkatan;
@@ -484,6 +569,9 @@ module.exports = {
       worksheetSPD3.getCell("F16").value = pegawai3.golongan;
       worksheetSPD3.getCell("F17").value = pegawai3.jabatan;
       worksheetSPD3.getCell("E23").value = puskesmas.label;
+      worksheetSPD3.getCell("E24").value = `${daysDifference} (${terbilang(
+        daysDifference
+      )}) hari`;
       worksheetSPD3.getCell("E25").value = formattedKeberangkatan;
       worksheetSPD3.getCell("E26").value = formattedPulang;
       worksheetSPD3.getCell("H34").value = formattedKeberangkatan;
@@ -496,6 +584,9 @@ module.exports = {
       worksheetSPD3.getCell("Q16").value = pegawai3.golongan;
       worksheetSPD3.getCell("Q17").value = pegawai3.jabatan;
       worksheetSPD3.getCell("P23").value = puskesmas.label;
+      worksheetSPD3.getCell("P24").value = `${daysDifference} (${terbilang(
+        daysDifference
+      )}) hari`;
       worksheetSPD3.getCell("P25").value = formattedKeberangkatan;
       worksheetSPD3.getCell("P26").value = formattedPulang;
       worksheetSPD3.getCell("S34").value = formattedKeberangkatan;
@@ -611,7 +702,7 @@ module.exports = {
     JSON_OBJECT('id', pegawai2.id, 'nama', pegawai2.nama, 'NIP', pegawai2.NIP, 'jabatan', pegawai2.jabatan, 'golongan', pegawai2.golongan) AS pegawai2,
     JSON_OBJECT('id', pegawai3.id, 'nama', pegawai3.nama, 'NIP', pegawai3.NIP, 'jabatan', pegawai3.jabatan, 'golongan', pegawai3.golongan) AS pegawai3,
     JSON_OBJECT('id', pegawai4.id, 'nama', pegawai4.nama, 'NIP', pegawai4.NIP, 'jabatan', pegawai4.jabatan, 'golongan', pegawai4.golongan) AS pegawai4,
-    JSON_OBJECT('id', puskesmas.id, 'nama', puskesmas.nama, 'honorDis', puskesmas.honorDis, 'honorMon', puskesmas.honorMon) AS puskesmasId
+    JSON_OBJECT('id', puskesmas.id, 'nama', puskesmas.nama, 'honorDis', puskesmas.honorDis, 'honorMon', puskesmas.honorMon, 'honorMonTran', puskesmas.honorMonTran) AS puskesmasId
     FROM keberangkatans
     LEFT JOIN pegawais AS pegawai1 ON keberangkatans.pegawai1Id = pegawai1.id
     LEFT JOIN pegawais AS pegawai2 ON keberangkatans.pegawai2Id = pegawai2.id
@@ -657,53 +748,53 @@ module.exports = {
     function terbilang(angka) {
       const satuan = [
         "",
-        "satu",
-        "dua",
-        "tiga",
-        "empat",
-        "lima",
-        "enam",
-        "tujuh",
-        "delapan",
-        "sembilan",
-        "sepuluh",
-        "sebelas",
+        "Satu",
+        "Dua",
+        "Tiga",
+        "Empat",
+        "Lima",
+        "Enam",
+        "Tujuh",
+        "Delapan",
+        "Sembilan",
+        "Sepuluh",
+        "Sebelas",
       ];
 
       if (angka < 12) {
         return satuan[angka];
       } else if (angka < 20) {
-        return terbilang(angka - 10) + " belas";
+        return terbilang(angka - 10) + " Belas";
       } else if (angka < 100) {
         return (
-          terbilang(Math.floor(angka / 10)) + " puluh " + terbilang(angka % 10)
+          terbilang(Math.floor(angka / 10)) + " Puluh " + terbilang(angka % 10)
         );
       } else if (angka < 200) {
-        return "seratus " + terbilang(angka - 100);
+        return "Seratus " + terbilang(angka - 100);
       } else if (angka < 1000) {
         return (
           terbilang(Math.floor(angka / 100)) +
-          " ratus " +
+          " Ratus " +
           terbilang(angka % 100)
         );
       } else if (angka < 2000) {
-        return "seribu " + terbilang(angka - 1000);
+        return "Seribu " + terbilang(angka - 1000);
       } else if (angka < 1000000) {
         return (
           terbilang(Math.floor(angka / 1000)) +
-          " ribu " +
+          " Ribu " +
           terbilang(angka % 1000)
         );
       } else if (angka < 1000000000) {
         return (
           terbilang(Math.floor(angka / 1000000)) +
-          " juta " +
+          " Juta " +
           terbilang(angka % 1000000)
         );
       } else if (angka < 1000000000000) {
         return (
           terbilang(Math.floor(angka / 1000000000)) +
-          " milyar " +
+          " Milyar " +
           terbilang(angka % 1000000000)
         );
       }
@@ -716,6 +807,7 @@ module.exports = {
     };
     const {
       nomorSuratSPD,
+      nomorSuratTugas,
       pegawai1Nama,
       pegawai1NIP,
       pegawai2Nama,
@@ -724,6 +816,10 @@ module.exports = {
       pegawai4NIP,
       pegawai4Nama,
       pegawai3NIP,
+      pegawai1Jabatan,
+      pegawai2Jabatan,
+      pegawai3Jabatan,
+      pegawai4Jabatan,
       puskesmas,
       tipe,
       keberangkatan,
@@ -747,234 +843,458 @@ module.exports = {
       const downloadPath = app.getPath("downloads");
       const newFileName = `${
         tipe == 1 ? "KWITANSI_DISTRIBUSI" : "KWITANSI_MONITORING"
-      }${Date.now()}.xlsx`;
+      } ${puskesmas.nama} ${Date.now()}.xlsx`;
       const newFilePath = path.join(downloadPath, newFileName);
       const workbook = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(sourceFilePath);
 
-      const worksheetRINCIANBPD = workbook.getWorksheet("RINCIAN BPD");
-      const worksheetRINCIANBPD2 = workbook.getWorksheet("RINCIAN BPD (2)");
-      const worksheetRINCIANBPD3 = workbook.getWorksheet("RINCIAN BPD (3)");
       const worksheetKWIT = workbook.getWorksheet("KWIT GLOBAL");
       const worksheetKWIT2 = workbook.getWorksheet("KWIT GLOBAL (2)");
       const worksheetKWIT3 = workbook.getWorksheet("KWIT GLOBAL (3)");
 
       const honor = tipe == 1 ? puskesmas.honorDis : puskesmas.honorMon;
-      const totalHonor = honor * daysDifference;
+      const honorHarian = honor * daysDifference;
+      const honorTransport = tipe == 1 ? 0 : puskesmas.honorMonTran;
+      const totalHonor = honor * daysDifference + honorTransport;
+      const UntukPembayaran =
+        tipe == 1
+          ? `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`
+          : `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Monitoring Melaksanakan Penggunaan Penyimpanan dan pengendalian Obat dan Alkes ke ${puskesmas.nama}. Sub Kegiatan Operasinal Pelayanan  Fasilitas Kesehatan Lainnya. Sesuai Surat Tugas dan SPPD Terlampir.`;
+
       if (tipe == 2) {
-        const worksheetRINCIANBPD4 = workbook.getWorksheet("RINCIAN BPD (4)");
         const worksheetKWIT4 = workbook.getWorksheet("KWIT GLOBAL (4)");
-        worksheetRINCIANBPD4.getCell("G11").value = honor;
-        worksheetRINCIANBPD4.getCell("D11").value = daysDifference;
-        worksheetRINCIANBPD4.getCell("I11").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("I16").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("B21").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("I21").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("F6").value = formatDate(keberangkatan);
-        worksheetRINCIANBPD4.getCell("F5").value = nomorSuratSPD;
-        worksheetRINCIANBPD4.getCell("I27").value = pegawai4Nama;
-        worksheetRINCIANBPD4.getCell("I28").value = pegawai4NIP;
-        worksheetRINCIANBPD4.getCell("H31").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("H33").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("D17").value = `${terbilang(
+
+        worksheetKWIT.getCell(
+          "AB14"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT.getCell(
+          "AB78"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT2.getCell(
+          "AB14"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT2.getCell(
+          "AB78"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT3.getCell(
+          "AB14"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT3.getCell(
+          "AB78"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT4.getCell(
+          "AB14"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT4.getCell(
+          "AB78"
+        ).value = `Tanah Grogot ke ${puskesmas.nama} (PP)`;
+        worksheetKWIT.getCell("AR4").value = pegawai1Nama;
+        worksheetKWIT.getCell("AR5").value = pegawai1NIP;
+        worksheetKWIT.getCell("AR6").value = pegawai1Jabatan;
+        worksheetKWIT.getCell("AS8").value = formatDate(keberangkatan);
+        worksheetKWIT.getCell(
+          "AO9"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT.getCell(
+          "AO17"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT.getCell("AI77").value = honorTransport;
+        worksheetKWIT.getCell("AU20").value = honorTransport;
+        worksheetKWIT.getCell("AT33").value = pegawai1Nama;
+        worksheetKWIT.getCell("AT34").value = "NIP. " + pegawai1NIP;
+
+        worksheetKWIT.getCell("AR68").value = pegawai1Nama;
+        worksheetKWIT.getCell("AR69").value = pegawai1NIP;
+        worksheetKWIT.getCell("AR70").value = pegawai1Jabatan;
+        worksheetKWIT.getCell("AS72").value = formatDate(keberangkatan);
+        worksheetKWIT.getCell(
+          "AO73"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT.getCell(
+          "AO81"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT.getCell("AU81").value = honorTransport;
+        worksheetKWIT.getCell("AU84").value = honorTransport;
+        worksheetKWIT.getCell("AT97").value = pegawai1Nama;
+        worksheetKWIT.getCell("AT98").value = "NIP. " + pegawai1NIP;
+
+        // /////
+        worksheetKWIT2.getCell("AR4").value = pegawai2Nama;
+        worksheetKWIT2.getCell("AR5").value = pegawai2NIP;
+        worksheetKWIT2.getCell("AR6").value = pegawai2Jabatan;
+        worksheetKWIT2.getCell("AS8").value = formatDate(keberangkatan);
+        worksheetKWIT2.getCell(
+          "AO9"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT2.getCell(
+          "AO17"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT2.getCell("AI77").value = honorTransport;
+        worksheetKWIT2.getCell("AU20").value = honorTransport;
+        worksheetKWIT2.getCell("AT33").value = pegawai2Nama;
+        worksheetKWIT2.getCell("AT34").value = "NIP. " + pegawai2NIP;
+
+        worksheetKWIT2.getCell("AR68").value = pegawai2Nama;
+        worksheetKWIT2.getCell("AR69").value = pegawai2NIP;
+        worksheetKWIT2.getCell("AR70").value = pegawai2Jabatan;
+        worksheetKWIT2.getCell("AS72").value = formatDate(keberangkatan);
+        worksheetKWIT2.getCell(
+          "AO73"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT2.getCell(
+          "AO81"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT2.getCell("AU81").value = honorTransport;
+        worksheetKWIT2.getCell("AU84").value = honorTransport;
+        worksheetKWIT2.getCell("AT97").value = pegawai2Nama;
+        worksheetKWIT2.getCell("AT98").value = "NIP. " + pegawai2NIP;
+
+        // ////
+        worksheetKWIT3.getCell("AR4").value = pegawai3Nama;
+        worksheetKWIT3.getCell("AR5").value = pegawai3NIP;
+        worksheetKWIT3.getCell("AR6").value = pegawai3Jabatan;
+        worksheetKWIT3.getCell("AS8").value = formatDate(keberangkatan);
+        worksheetKWIT3.getCell(
+          "AO9"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT3.getCell(
+          "AO17"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT3.getCell("AI77").value = honorTransport;
+        worksheetKWIT3.getCell("AU20").value = honorTransport;
+        worksheetKWIT3.getCell("AT33").value = pegawai3Nama;
+        worksheetKWIT3.getCell("AT34").value = "NIP. " + pegawai3NIP;
+
+        worksheetKWIT3.getCell("AR68").value = pegawai3Nama;
+        worksheetKWIT3.getCell("AR69").value = pegawai3NIP;
+        worksheetKWIT3.getCell("AR70").value = pegawai3Jabatan;
+        worksheetKWIT3.getCell("AS72").value = formatDate(keberangkatan);
+        worksheetKWIT3.getCell(
+          "AO73"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT3.getCell(
+          "AO81"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT3.getCell("AU81").value = honorTransport;
+        worksheetKWIT3.getCell("AU84").value = honorTransport;
+        worksheetKWIT3.getCell("AT97").value = pegawai3Nama;
+        worksheetKWIT3.getCell("AT98").value = "NIP. " + pegawai3NIP;
+
+        // ///////
+
+        worksheetKWIT4.getCell("AR4").value = pegawai4Nama;
+        worksheetKWIT4.getCell("AR5").value = pegawai4NIP;
+        worksheetKWIT4.getCell("AR6").value = pegawai4Jabatan;
+        worksheetKWIT4.getCell("AS8").value = formatDate(keberangkatan);
+        worksheetKWIT4.getCell(
+          "AO9"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT4.getCell(
+          "AO17"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT4.getCell("AI77").value = honorTransport;
+        worksheetKWIT4.getCell("AU20").value = honorTransport;
+        worksheetKWIT4.getCell("AT33").value = pegawai4Nama;
+        worksheetKWIT4.getCell("AT34").value = "NIP. " + pegawai4NIP;
+
+        worksheetKWIT4.getCell("AR68").value = pegawai4Nama;
+        worksheetKWIT4.getCell("AR69").value = pegawai4NIP;
+        worksheetKWIT4.getCell("AR70").value = pegawai4Jabatan;
+        worksheetKWIT4.getCell("AS72").value = formatDate(keberangkatan);
+        worksheetKWIT4.getCell(
+          "AO73"
+        ).value = `${nomorSuratTugas}, dengan ini kami menyatakan dengan sesungguhnya bahwa: `;
+        worksheetKWIT4.getCell(
+          "AO81"
+        ).value = `Tanah Grogot ke ${puskesmas.nama}`;
+        worksheetKWIT4.getCell("AU81").value = honorTransport;
+        worksheetKWIT4.getCell("AU84").value = honorTransport;
+        worksheetKWIT4.getCell("AT97").value = pegawai4Nama;
+        worksheetKWIT4.getCell("AT98").value = "NIP. " + pegawai4NIP;
+
+        worksheetKWIT4.getCell("AG11").value = honor;
+        worksheetKWIT4.getCell("AD11").value = daysDifference;
+        worksheetKWIT4.getCell("AE11").value = `(${terbilang(
+          daysDifference
+        )}) hari`;
+        worksheetKWIT4.getCell("AI11").value = honorHarian;
+        worksheetKWIT4.getCell("AI16").value = totalHonor;
+        worksheetKWIT4.getCell("AB21").value = totalHonor;
+        worksheetKWIT4.getCell("AI21").value = totalHonor;
+        worksheetKWIT4.getCell("AF6").value = formatDate(keberangkatan);
+        worksheetKWIT4.getCell("AF5").value = nomorSuratTugas;
+        worksheetKWIT4.getCell("AI27").value = pegawai4Nama;
+        worksheetKWIT4.getCell("AI28").value = "NIP. " + pegawai4NIP;
+        worksheetKWIT4.getCell("AG31").value = totalHonor;
+        worksheetKWIT4.getCell("AG33").value = totalHonor;
+        worksheetKWIT4.getCell("AD17").value = `${terbilang(
           totalHonor
         )} Rupiah`;
 
-        worksheetRINCIANBPD4.getCell("S11").value = honor;
-        worksheetRINCIANBPD4.getCell("P11").value = daysDifference;
-        worksheetRINCIANBPD4.getCell("U11").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("U16").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("N21").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("I21").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("R6").value = formatDate(keberangkatan);
-        worksheetRINCIANBPD4.getCell("R5").value = nomorSuratSPD;
-        worksheetRINCIANBPD4.getCell("U27").value = pegawai4Nama;
-        worksheetRINCIANBPD4.getCell("U28").value = pegawai4NIP;
-        worksheetRINCIANBPD4.getCell("T31").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("T33").value = totalHonor;
-        worksheetRINCIANBPD4.getCell("P17").value = `${terbilang(
+        worksheetKWIT4.getCell("AG75").value = honor;
+        worksheetKWIT4.getCell("AD75").value = daysDifference;
+        worksheetKWIT4.getCell("AE75").value = `(${terbilang(
+          daysDifference
+        )}) hari`;
+        worksheetKWIT4.getCell("AI75").value = honorHarian;
+        worksheetKWIT4.getCell("AI80").value = totalHonor;
+        worksheetKWIT4.getCell("AB85").value = totalHonor;
+        worksheetKWIT4.getCell("AI85").value = totalHonor;
+        worksheetKWIT4.getCell("AF70").value = formatDate(keberangkatan);
+        worksheetKWIT4.getCell("AF69").value = nomorSuratTugas;
+        worksheetKWIT4.getCell("AI91").value = pegawai1Nama;
+        worksheetKWIT4.getCell("AI92").value = "NIP. " + pegawai4NIP;
+        worksheetKWIT4.getCell("AG95").value = totalHonor;
+        worksheetKWIT4.getCell("AG97").value = totalHonor;
+        worksheetKWIT4.getCell("AD81").value = `${terbilang(
           totalHonor
         )} Rupiah`;
+
+        worksheetKWIT4.getCell("AI13").value = honorTransport;
+        worksheetKWIT4.getCell("AU17").value = honorTransport;
+
+        worksheetKWIT3.getCell("AI13").value = honorTransport;
+        worksheetKWIT3.getCell("AU17").value = honorTransport;
+
+        worksheetKWIT2.getCell("AI13").value = honorTransport;
+        worksheetKWIT2.getCell("AU17").value = honorTransport;
+
+        worksheetKWIT.getCell("AI13").value = honorTransport;
+        worksheetKWIT.getCell("AU17").value = honorTransport;
 
         worksheetKWIT4.getCell("D13").value = `${terbilang(totalHonor)} Rupiah`;
-        worksheetKWIT4.getCell("D11").value = honor;
+        worksheetKWIT4.getCell("D11").value = totalHonor;
         worksheetKWIT4.getCell("G28").value = pegawai4Nama;
-        worksheetKWIT4.getCell("G29").value = pegawai4NIP;
+        worksheetKWIT4.getCell("G29").value = "NIP. " + pegawai4NIP;
         worksheetKWIT4.getCell("I2").value = generateTahun(keberangkatan);
 
-        worksheetKWIT4.getCell(
-          "D17"
-        ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+        worksheetKWIT4.getCell("D17").value = UntukPembayaran;
 
         worksheetKWIT4.getCell("Q13").value = `${terbilang(totalHonor)} Rupiah`;
-        worksheetKWIT4.getCell("Q11").value = honor;
+        worksheetKWIT4.getCell("Q11").value = totalHonor;
         worksheetKWIT4.getCell("T28").value = pegawai4Nama;
-        worksheetKWIT4.getCell("T29").value = pegawai4NIP;
+        worksheetKWIT4.getCell("T29").value = "NIP. " + pegawai4NIP;
         worksheetKWIT4.getCell("V2").value = generateTahun(keberangkatan);
 
-        worksheetKWIT4.getCell(
-          "Q17"
-        ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+        worksheetKWIT4.getCell("Q17").value = UntukPembayaran;
+
+        worksheetKWIT4.getCell("D77").value = `${terbilang(totalHonor)} Rupiah`;
+        worksheetKWIT4.getCell("D75").value = totalHonor;
+        worksheetKWIT4.getCell("G92").value = pegawai4Nama;
+        worksheetKWIT4.getCell("G93").value = "NIP. " + pegawai4NIP;
+        worksheetKWIT4.getCell("I66").value = generateTahun(keberangkatan);
+
+        worksheetKWIT4.getCell("D81").value = UntukPembayaran;
+
+        worksheetKWIT4.getCell("Q77").value = `${terbilang(totalHonor)} Rupiah`;
+        worksheetKWIT4.getCell("Q75").value = totalHonor;
+        worksheetKWIT4.getCell("T92").value = pegawai4Nama;
+        worksheetKWIT4.getCell("T93").value = "NIP. " + pegawai4NIP;
+        worksheetKWIT4.getCell("V66").value = generateTahun(keberangkatan);
+
+        worksheetKWIT4.getCell("Q81").value = UntukPembayaran;
       }
 
-      worksheetRINCIANBPD.getCell("G11").value = honor;
-      worksheetRINCIANBPD.getCell("D11").value = daysDifference;
-      worksheetRINCIANBPD.getCell("I11").value = totalHonor;
-      worksheetRINCIANBPD.getCell("I16").value = totalHonor;
-      worksheetRINCIANBPD.getCell("B21").value = totalHonor;
-      worksheetRINCIANBPD.getCell("I21").value = totalHonor;
-      worksheetRINCIANBPD.getCell("F6").value = formatDate(keberangkatan);
-      worksheetRINCIANBPD.getCell("F5").value = nomorSuratSPD;
-      worksheetRINCIANBPD.getCell("I27").value = pegawai1Nama;
-      worksheetRINCIANBPD.getCell("I28").value = pegawai1NIP;
-      worksheetRINCIANBPD.getCell("H31").value = totalHonor;
-      worksheetRINCIANBPD.getCell("H33").value = totalHonor;
-      worksheetRINCIANBPD.getCell("D17").value = `${terbilang(
-        totalHonor
-      )} Rupiah`;
+      worksheetKWIT.getCell("AG11").value = honor;
+      worksheetKWIT.getCell("AD11").value = daysDifference;
+      worksheetKWIT.getCell("AE11").value = `(${terbilang(
+        daysDifference
+      )}) hari`;
+      worksheetKWIT.getCell("AI11").value = honorHarian;
+      worksheetKWIT.getCell("AI16").value = totalHonor;
+      worksheetKWIT.getCell("AB21").value = totalHonor;
+      worksheetKWIT.getCell("AI21").value = totalHonor;
+      worksheetKWIT.getCell("AF6").value = formatDate(keberangkatan);
+      worksheetKWIT.getCell("AF5").value = nomorSuratTugas;
+      worksheetKWIT.getCell("AI27").value = pegawai1Nama;
+      worksheetKWIT.getCell("AI28").value = "NIP. " + pegawai1NIP;
+      worksheetKWIT.getCell("AG31").value = totalHonor;
+      worksheetKWIT.getCell("AG33").value = totalHonor;
+      worksheetKWIT.getCell("AD17").value = `${terbilang(totalHonor)} Rupiah`;
 
-      worksheetRINCIANBPD.getCell("S11").value = honor;
-      worksheetRINCIANBPD.getCell("P11").value = daysDifference;
-      worksheetRINCIANBPD.getCell("U11").value = totalHonor;
-      worksheetRINCIANBPD.getCell("U16").value = totalHonor;
-      worksheetRINCIANBPD.getCell("N21").value = totalHonor;
-      worksheetRINCIANBPD.getCell("I21").value = totalHonor;
-      worksheetRINCIANBPD.getCell("R6").value = formatDate(keberangkatan);
-      worksheetRINCIANBPD.getCell("R5").value = nomorSuratSPD;
-      worksheetRINCIANBPD.getCell("U27").value = pegawai1Nama;
-      worksheetRINCIANBPD.getCell("U28").value = pegawai1NIP;
-      worksheetRINCIANBPD.getCell("T31").value = totalHonor;
-      worksheetRINCIANBPD.getCell("T33").value = totalHonor;
-      worksheetRINCIANBPD.getCell("P17").value = `${terbilang(
-        totalHonor
-      )} Rupiah`;
+      worksheetKWIT.getCell("AG75").value = honor;
+      worksheetKWIT.getCell("AD75").value = daysDifference;
+      worksheetKWIT.getCell("AE75").value = `(${terbilang(
+        daysDifference
+      )}) hari`;
+      worksheetKWIT.getCell("AI75").value = honorHarian;
+      worksheetKWIT.getCell("AI80").value = totalHonor;
+      worksheetKWIT.getCell("AB85").value = totalHonor;
+      worksheetKWIT.getCell("AI85").value = totalHonor;
+      worksheetKWIT.getCell("AF70").value = formatDate(keberangkatan);
+      worksheetKWIT.getCell("AF69").value = nomorSuratTugas;
+      worksheetKWIT.getCell("AI91").value = pegawai1Nama;
+      worksheetKWIT.getCell("AI92").value = "NIP. " + pegawai1NIP;
+      worksheetKWIT.getCell("AG95").value = totalHonor;
+      worksheetKWIT.getCell("AG97").value = totalHonor;
+      worksheetKWIT.getCell("AD81").value = `${terbilang(totalHonor)} Rupiah`;
       // /////////////////////////////////////////////
 
-      worksheetRINCIANBPD2.getCell("G11").value = honor;
-      worksheetRINCIANBPD2.getCell("D11").value = daysDifference;
-      worksheetRINCIANBPD2.getCell("I11").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("I16").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("B21").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("I21").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("F6").value = formatDate(keberangkatan);
-      worksheetRINCIANBPD2.getCell("F5").value = nomorSuratSPD;
-      worksheetRINCIANBPD2.getCell("I27").value = pegawai2Nama;
-      worksheetRINCIANBPD2.getCell("I28").value = pegawai2NIP;
-      worksheetRINCIANBPD2.getCell("H31").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("H33").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("D17").value = `${terbilang(
-        totalHonor
-      )} Rupiah`;
+      worksheetKWIT2.getCell("AG11").value = honor;
+      worksheetKWIT2.getCell("AD11").value = daysDifference;
+      worksheetKWIT2.getCell("AE11").value = `(${terbilang(
+        daysDifference
+      )}) hari`;
+      worksheetKWIT2.getCell("AI11").value = honorHarian;
+      worksheetKWIT2.getCell("AI16").value = totalHonor;
+      worksheetKWIT2.getCell("AB21").value = totalHonor;
+      worksheetKWIT2.getCell("AI21").value = totalHonor;
+      worksheetKWIT2.getCell("AF6").value = formatDate(keberangkatan);
+      worksheetKWIT2.getCell("AF5").value = nomorSuratTugas;
+      worksheetKWIT2.getCell("AI27").value = pegawai2Nama;
+      worksheetKWIT2.getCell("AI28").value = "NIP. " + pegawai2NIP;
+      worksheetKWIT2.getCell("AG31").value = totalHonor;
+      worksheetKWIT2.getCell("AG33").value = totalHonor;
+      worksheetKWIT2.getCell("AD17").value = `${terbilang(totalHonor)} Rupiah`;
 
-      worksheetRINCIANBPD2.getCell("S11").value = honor;
-      worksheetRINCIANBPD2.getCell("P11").value = daysDifference;
-      worksheetRINCIANBPD2.getCell("U11").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("U16").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("N21").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("I21").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("R6").value = formatDate(keberangkatan);
-      worksheetRINCIANBPD2.getCell("R5").value = nomorSuratSPD;
-      worksheetRINCIANBPD2.getCell("U27").value = pegawai2Nama;
-      worksheetRINCIANBPD2.getCell("U28").value = pegawai2NIP;
-      worksheetRINCIANBPD2.getCell("T31").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("T33").value = totalHonor;
-      worksheetRINCIANBPD2.getCell("P17").value = `${terbilang(
-        totalHonor
-      )} Rupiah`;
+      worksheetKWIT2.getCell("AG75").value = honor;
+      worksheetKWIT2.getCell("AD75").value = daysDifference;
+      worksheetKWIT2.getCell("AE75").value = `(${terbilang(
+        daysDifference
+      )}) hari`;
+      worksheetKWIT2.getCell("AI75").value = honorHarian;
+      worksheetKWIT2.getCell("AI80").value = totalHonor;
+      worksheetKWIT2.getCell("AB85").value = totalHonor;
+      worksheetKWIT2.getCell("AI85").value = totalHonor;
+      worksheetKWIT2.getCell("AF70").value = formatDate(keberangkatan);
+      worksheetKWIT2.getCell("AF69").value = nomorSuratTugas;
+      worksheetKWIT2.getCell("AI91").value = pegawai2Nama;
+      worksheetKWIT2.getCell("AI92").value = "NIP. " + pegawai2NIP;
+      worksheetKWIT2.getCell("AG95").value = totalHonor;
+      worksheetKWIT2.getCell("AG97").value = totalHonor;
+      worksheetKWIT2.getCell("AD81").value = `${terbilang(totalHonor)} Rupiah`;
       // ///////////////////////////////////////////
 
-      worksheetRINCIANBPD3.getCell("G11").value = honor;
-      worksheetRINCIANBPD3.getCell("D11").value = daysDifference;
-      worksheetRINCIANBPD3.getCell("I11").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("I16").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("B21").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("I21").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("F6").value = formatDate(keberangkatan);
-      worksheetRINCIANBPD3.getCell("F5").value = nomorSuratSPD;
-      worksheetRINCIANBPD3.getCell("I27").value = pegawai3Nama;
-      worksheetRINCIANBPD3.getCell("I28").value = pegawai3NIP;
-      worksheetRINCIANBPD3.getCell("H31").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("H33").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("D17").value = `${terbilang(
-        totalHonor
-      )} Rupiah`;
+      worksheetKWIT3.getCell("AG11").value = honor;
+      worksheetKWIT3.getCell("AD11").value = daysDifference;
+      worksheetKWIT3.getCell("AE11").value = `(${terbilang(
+        daysDifference
+      )}) hari`;
+      worksheetKWIT3.getCell("AI11").value = honorHarian;
+      worksheetKWIT3.getCell("AI16").value = totalHonor;
+      worksheetKWIT3.getCell("AB21").value = totalHonor;
+      worksheetKWIT3.getCell("AI21").value = totalHonor;
+      worksheetKWIT3.getCell("AF6").value = formatDate(keberangkatan);
+      worksheetKWIT3.getCell("AF5").value = nomorSuratTugas;
+      worksheetKWIT3.getCell("AI27").value = pegawai3Nama;
+      worksheetKWIT3.getCell("AI28").value = "NIP. " + pegawai3NIP;
+      worksheetKWIT3.getCell("AG31").value = totalHonor;
+      worksheetKWIT3.getCell("AG33").value = totalHonor;
+      worksheetKWIT3.getCell("AD17").value = `${terbilang(totalHonor)} Rupiah`;
 
-      worksheetRINCIANBPD3.getCell("S11").value = honor;
-      worksheetRINCIANBPD3.getCell("P11").value = daysDifference;
-      worksheetRINCIANBPD3.getCell("U11").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("U16").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("N21").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("I21").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("R6").value = formatDate(keberangkatan);
-      worksheetRINCIANBPD3.getCell("R5").value = nomorSuratSPD;
-      worksheetRINCIANBPD3.getCell("U27").value = pegawai3Nama;
-      worksheetRINCIANBPD3.getCell("U28").value = pegawai3NIP;
-      worksheetRINCIANBPD3.getCell("T31").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("T33").value = totalHonor;
-      worksheetRINCIANBPD3.getCell("P17").value = `${terbilang(
-        totalHonor
-      )} Rupiah`;
+      worksheetKWIT3.getCell("AG75").value = honor;
+      worksheetKWIT3.getCell("AD75").value = daysDifference;
+      worksheetKWIT3.getCell("AE75").value = `(${terbilang(
+        daysDifference
+      )}) hari`;
+      worksheetKWIT3.getCell("AI75").value = honorHarian;
+      worksheetKWIT3.getCell("AI80").value = totalHonor;
+      worksheetKWIT3.getCell("AB85").value = totalHonor;
+      worksheetKWIT3.getCell("AI85").value = totalHonor;
+      worksheetKWIT3.getCell("AF70").value = formatDate(keberangkatan);
+      worksheetKWIT3.getCell("AF69").value = nomorSuratTugas;
+      worksheetKWIT3.getCell("AI91").value = pegawai3Nama;
+      worksheetKWIT3.getCell("AI92").value = "NIP. " + pegawai3NIP;
+      worksheetKWIT3.getCell("AG95").value = totalHonor;
+      worksheetKWIT3.getCell("AG97").value = totalHonor;
+      worksheetKWIT3.getCell("AD81").value = `${terbilang(totalHonor)} Rupiah`;
       ////////////////////////////////
       worksheetKWIT.getCell("D13").value = `${terbilang(totalHonor)} Rupiah`;
-      worksheetKWIT.getCell("D11").value = honor;
+      worksheetKWIT.getCell("D11").value = totalHonor;
       worksheetKWIT.getCell("G28").value = pegawai1Nama;
-      worksheetKWIT.getCell("G29").value = pegawai1NIP;
+      worksheetKWIT.getCell("G29").value = "NIP. " + pegawai1NIP;
       worksheetKWIT.getCell("I2").value = generateTahun(keberangkatan);
 
-      worksheetKWIT.getCell(
-        "D17"
-      ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+      worksheetKWIT.getCell("D17").value = UntukPembayaran;
 
       worksheetKWIT.getCell("Q13").value = `${terbilang(totalHonor)} Rupiah`;
-      worksheetKWIT.getCell("Q11").value = honor;
+      worksheetKWIT.getCell("Q11").value = totalHonor;
       worksheetKWIT.getCell("T28").value = pegawai1Nama;
-      worksheetKWIT.getCell("T29").value = pegawai1NIP;
+      worksheetKWIT.getCell("T29").value = "NIP. " + pegawai1NIP;
       worksheetKWIT.getCell("V2").value = generateTahun(keberangkatan);
 
-      worksheetKWIT.getCell(
-        "Q17"
-      ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+      worksheetKWIT.getCell("Q17").value = UntukPembayaran;
+
+      worksheetKWIT.getCell("D77").value = `${terbilang(totalHonor)} Rupiah`;
+      worksheetKWIT.getCell("D75").value = totalHonor;
+      worksheetKWIT.getCell("G92").value = pegawai1Nama;
+      worksheetKWIT.getCell("G93").value = "NIP. " + pegawai1NIP;
+      worksheetKWIT.getCell("I66").value = generateTahun(keberangkatan);
+
+      worksheetKWIT.getCell("D81").value = UntukPembayaran;
+
+      worksheetKWIT.getCell("Q77").value = `${terbilang(totalHonor)} Rupiah`;
+      worksheetKWIT.getCell("Q75").value = totalHonor;
+      worksheetKWIT.getCell("T92").value = pegawai1Nama;
+      worksheetKWIT.getCell("T93").value = "NIP. " + pegawai1NIP;
+      worksheetKWIT.getCell("V66").value = generateTahun(keberangkatan);
+
+      worksheetKWIT.getCell("Q81").value = UntukPembayaran;
       //  ////////////////////
       worksheetKWIT2.getCell("D13").value = `${terbilang(totalHonor)} Rupiah`;
-      worksheetKWIT2.getCell("D11").value = honor;
+      worksheetKWIT2.getCell("D11").value = totalHonor;
       worksheetKWIT2.getCell("G28").value = pegawai2Nama;
-      worksheetKWIT2.getCell("G29").value = pegawai2NIP;
+      worksheetKWIT2.getCell("G29").value = "NIP. " + pegawai2NIP;
       worksheetKWIT2.getCell("I2").value = generateTahun(keberangkatan);
 
-      worksheetKWIT2.getCell(
-        "D17"
-      ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+      worksheetKWIT2.getCell("D17").value = UntukPembayaran;
 
       worksheetKWIT2.getCell("Q13").value = `${terbilang(totalHonor)} Rupiah`;
-      worksheetKWIT2.getCell("Q11").value = honor;
+      worksheetKWIT2.getCell("Q11").value = totalHonor;
       worksheetKWIT2.getCell("T28").value = pegawai2Nama;
-      worksheetKWIT2.getCell("T29").value = pegawai2NIP;
+      worksheetKWIT2.getCell("T29").value = "NIP. " + pegawai2NIP;
       worksheetKWIT2.getCell("V2").value = generateTahun(keberangkatan);
 
-      worksheetKWIT2.getCell(
-        "Q17"
-      ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+      worksheetKWIT2.getCell("Q17").value = UntukPembayaran;
+
+      worksheetKWIT2.getCell("D77").value = `${terbilang(totalHonor)} Rupiah`;
+      worksheetKWIT2.getCell("D75").value = totalHonor;
+      worksheetKWIT2.getCell("G92").value = pegawai2Nama;
+      worksheetKWIT2.getCell("G93").value = "NIP. " + pegawai2NIP;
+      worksheetKWIT2.getCell("I66").value = generateTahun(keberangkatan);
+
+      worksheetKWIT2.getCell("D81").value = UntukPembayaran;
+
+      worksheetKWIT2.getCell("Q77").value = `${terbilang(totalHonor)} Rupiah`;
+      worksheetKWIT2.getCell("Q75").value = totalHonor;
+      worksheetKWIT2.getCell("T92").value = pegawai2Nama;
+      worksheetKWIT2.getCell("T93").value = "NIP. " + pegawai2NIP;
+      worksheetKWIT2.getCell("V66").value = generateTahun(keberangkatan);
+
+      worksheetKWIT2.getCell("Q81").value = UntukPembayaran;
       // //////////////////////
 
       worksheetKWIT3.getCell("D13").value = `${terbilang(totalHonor)} Rupiah`;
-      worksheetKWIT3.getCell("D11").value = honor;
+      worksheetKWIT3.getCell("D11").value = totalHonor;
       worksheetKWIT3.getCell("G28").value = pegawai3Nama;
-      worksheetKWIT3.getCell("G29").value = pegawai3NIP;
+      worksheetKWIT3.getCell("G29").value = "NIP. " + pegawai3NIP;
       worksheetKWIT3.getCell("I2").value = generateTahun(keberangkatan);
 
-      worksheetKWIT3.getCell(
-        "D17"
-      ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+      worksheetKWIT3.getCell("D17").value = UntukPembayaran;
 
       worksheetKWIT3.getCell("Q13").value = `${terbilang(totalHonor)} Rupiah`;
-      worksheetKWIT3.getCell("Q11").value = honor;
+      worksheetKWIT3.getCell("Q11").value = totalHonor;
       worksheetKWIT3.getCell("T28").value = pegawai3Nama;
-      worksheetKWIT3.getCell("T29").value = pegawai3NIP;
+      worksheetKWIT3.getCell("T29").value = "NIP. " + pegawai3NIP;
       worksheetKWIT3.getCell("V2").value = generateTahun(keberangkatan);
 
-      worksheetKWIT3.getCell(
-        "Q17"
-      ).value = `Pembayaran Perjalanan dinas Dalam Kota, Dalam Rangka Distribusi Obat Ke ${puskesmas.nama}. Sub Kegiatan Distribusi Alat Kesehatan, Obat, Bahan Habis Pakai, Bahan Medis Habis Pakai, Vaksin, Makanan, Minuman ke fasilitas Kesehatan, pada UPTD Perbekalan Obat dan Alkes Kab.Paser. Sesuai Surat Tugas dan SPPD Terlampir.`;
+      worksheetKWIT3.getCell("Q17").value = UntukPembayaran;
+
+      worksheetKWIT3.getCell("D77").value = `${terbilang(totalHonor)} Rupiah`;
+      worksheetKWIT3.getCell("D75").value = totalHonor;
+      worksheetKWIT3.getCell("G92").value = pegawai3Nama;
+      worksheetKWIT3.getCell("G93").value = "NIP. " + pegawai3NIP;
+      worksheetKWIT3.getCell("I66").value = generateTahun(keberangkatan);
+
+      worksheetKWIT3.getCell("D81").value = UntukPembayaran;
+
+      worksheetKWIT3.getCell("Q77").value = `${terbilang(totalHonor)} Rupiah`;
+      worksheetKWIT3.getCell("Q75").value = totalHonor;
+      worksheetKWIT3.getCell("T92").value = pegawai3Nama;
+      worksheetKWIT3.getCell("T93").value = "NIP. " + pegawai3NIP;
+      worksheetKWIT3.getCell("V66").value = generateTahun(keberangkatan);
+
+      worksheetKWIT3.getCell("Q81").value = UntukPembayaran;
 
       // Simpan perubahan ke file baru
       await workbook.xlsx.writeFile(newFilePath);
@@ -986,7 +1306,6 @@ module.exports = {
   },
 
   editNomorSurat: async (req, res) => {
-    console.log(req.body, `editSURATTTTTTTTTTTT`);
     const { nomorSuratTugas, nomorSuratNotaDinas, nomorSuratSPD, id } =
       req.body;
     const sql = `UPDATE keberangkatans SET nomorSuratNotaDinas = ?, nomorSuratSPD = ?, nomorSuratTugas = ? WHERE id = ?`;
@@ -1007,7 +1326,6 @@ module.exports = {
 
   editTujuan: (req, res) => {
     const { puskesmasId, id } = req.body;
-    console.log(req.body);
 
     const sql = `UPDATE keberangkatans SET puskesmasId = ? WHERE id = ?`;
 

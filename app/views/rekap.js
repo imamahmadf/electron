@@ -11,6 +11,7 @@ const RekapSurat = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPrintKwitansi, setShowPrintKwitansi] = useState(false);
   const [showDeleteSatuModal, setShowDeleteSatuModal] = useState(false);
+  const [showRekap, setShowRekap] = useState(false);
   const [printKwitansiData, setPrintKwitansiData] = useState({});
   const [deleteId, setDeleteId] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -31,7 +32,9 @@ const RekapSurat = () => {
 
     axios
       .post(`rekap/get`, { dataKeAPI: reversedData, pegawaiList, jenisSPPD })
-      .then((res) => {})
+      .then((res) => {
+        setShowRekap(true);
+      })
       .catch((err) => {
         console.error(err.message);
       });
@@ -122,14 +125,19 @@ const RekapSurat = () => {
     try {
       const dataToSend = {
         nomorSuratSPD: printKwitansiData.nomorSuratSPD,
+        nomorSuratTugas: printKwitansiData.nomorSuratTugas,
         pegawai1Nama: JSON.parse(printKwitansiData.pegawai1).nama,
         pegawai1NIP: JSON.parse(printKwitansiData.pegawai1).NIP,
+        pegawai1Jabatan: JSON.parse(printKwitansiData.pegawai1).jabatan,
         pegawai2Nama: JSON.parse(printKwitansiData.pegawai2).nama,
         pegawai2NIP: JSON.parse(printKwitansiData.pegawai2).NIP,
+        pegawai2Jabatan: JSON.parse(printKwitansiData.pegawai2).jabatan,
         pegawai3Nama: JSON.parse(printKwitansiData.pegawai3).nama,
         pegawai3NIP: JSON.parse(printKwitansiData.pegawai3).NIP,
+        pegawai3Jabatan: JSON.parse(printKwitansiData.pegawai3).jabatan,
         pegawai4Nama: JSON.parse(printKwitansiData.pegawai4).nama,
         pegawai4NIP: JSON.parse(printKwitansiData.pegawai4).NIP,
+        pegawai4Jabatan: JSON.parse(printKwitansiData.pegawai4).jabatan,
         puskesmas: JSON.parse(printKwitansiData.puskesmasId),
         tipe: printKwitansiData.tipe,
         keberangkatan: printKwitansiData.keberangkatan,
@@ -167,8 +175,8 @@ const RekapSurat = () => {
       nomorSuratSPD: editedData.nomorSuratSPD,
     })
       .then((response) => {
-        alert("Data updated successfully!");
         // Close the edit modal
+        fetchData();
         setEditMode(false);
       })
       .catch((error) => {
@@ -531,6 +539,22 @@ const RekapSurat = () => {
             </Button>
             <Button variant="primary" onClick={sendTujuanData}>
               Edit
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={showRekap} onHide={() => setShowRekap(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Informasi</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              File REKAP berhasil dibuat, silahkan periksa folder download yang
+              ada di komputer anda.
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowRekap(false)}>
+              Tutup
             </Button>
           </Modal.Footer>
         </Modal>

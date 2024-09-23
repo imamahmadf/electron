@@ -47,9 +47,9 @@ module.exports = {
           worksheetDisOrg.getCell(`D${rowNumber}`).value = data.nomorSuratTugas;
           worksheetDisOrg.getCell(`E${rowNumber}`).value = data.nomorSuratSPD;
           worksheetDisOrg.getCell(`F${rowNumber}`).value =
-            req.body.jenisSPPD == "Distribusi"
-              ? "Distribuai Obat"
-              : "Moinitoring";
+            req.body.jenisSPPD?.label == "Distribusi"
+              ? "Distribusi Obat"
+              : "Monitoring";
         });
 
         worksheetDisOrg.getCell(`A2`).value =
@@ -90,7 +90,7 @@ module.exports = {
         });
         await workbook.xlsx.writeFile(newFilePath);
       }
-
+      res.status(200).send(`REKAP BERHASIL`);
       // Membuat workbook baru
     } catch (error) {
       console.error("Error handling post request:", error);

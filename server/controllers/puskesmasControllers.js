@@ -2,7 +2,7 @@ const { db } = require("../database");
 
 module.exports = {
   getAllPuskesmas: (req, res) => {
-    let sqlGet = `SELECT id, nama, honorDis, honorMon FROM puskesmas ORDER BY nama ASC`;
+    let sqlGet = `SELECT id, nama, honorDis, honorMon, honorMonTran FROM puskesmas ORDER BY nama ASC`;
 
     db.query(sqlGet, (err, results) => {
       if (err) {
@@ -27,28 +27,34 @@ module.exports = {
 
   editPuskesmas: (req, res) => {
     console.log(req.body);
-    const { nama, id, honorDis, honorMon } = req.body;
+    const { nama, id, honorDis, honorMon, honorMonTran } = req.body;
 
-    const sql = `UPDATE puskesmas SET nama = ?, honorDis = ?, honorMon = ? WHERE id = ?`;
+    const sql = `UPDATE puskesmas SET nama = ?, honorDis = ?, honorMon = ?, honorMonTran = ? WHERE id = ?`;
 
-    db.query(sql, [nama, honorDis, honorMon, id], (err, result) => {
-      if (err) {
-        console.error("Error updating data in database:", err);
-        return res
-          .status(500)
-          .send("Terjadi kesalahan saat mengupdate data di database.");
+    db.query(
+      sql,
+      [nama, honorDis, honorMon, honorMonTran, id],
+      (err, result) => {
+        if (err) {
+          console.error("Error updating data in database:", err);
+          return res
+            .status(500)
+            .send("Terjadi kesalahan saat mengupdate data di database.");
+        }
+        res
+          .status(200)
+          .send(`Data berhasil diupdate di database. ${nama} ${id}`);
       }
-      res.status(200).send(`Data berhasil diupdate di database. ${nama} ${id}`);
-    });
+    );
   },
 
   postPuskesmas: (req, res) => {
-    const { nama, honorDistribusi, honorMonitoring } = req.body;
+    const { nama, honorDistribusi, honorMonitoring, honorTransport } = req.body;
     console.log(req.body, "NAMAA");
-    let sqlAdd = `INSERT INTO puskesmas (nama, honorDis, honorMon) VALUES (?, ?, ?)`;
+    let sqlAdd = `INSERT INTO puskesmas (nama, honorDis, honorMon, honorMonTran) VALUES (?, ?, ?, ?)`;
     db.query(
       sqlAdd,
-      [nama, honorDistribusi, honorMonitoring],
+      [nama, honorDistribusi, honorMonitoring, honorTransport],
       (err, result) => {
         if (err) {
           console.error(err);

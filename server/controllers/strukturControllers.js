@@ -55,27 +55,58 @@ module.exports = {
         .readFile(sourceFilePathKwitansiDis)
         .then(() => {
           // BENDAHARA KWITANSI DISTRIBUSI //////////////
-          const worksheetKwitansiDis =
-            workbookKwitansiDis.getWorksheet("RINCIAN BPD");
-          const worksheetKwitansiDis2 =
-            workbookKwitansiDis.getWorksheet("RINCIAN BPD (2)");
-          const worksheetKwitansiDis3 =
-            workbookKwitansiDis.getWorksheet("RINCIAN BPD (3)");
 
-          worksheetKwitansiDis.getCell("B27").value = nama;
-          worksheetKwitansiDis.getCell("B28").value = "NIP." + NIP;
-          worksheetKwitansiDis.getCell("N27").value = nama;
-          worksheetKwitansiDis.getCell("N28").value = "NIP." + NIP;
+          const worksheetKwitansiDisGlo =
+            workbookKwitansiDis.getWorksheet("KWIT GLOBAL");
+          const worksheetKwitansiDisGlo2 =
+            workbookKwitansiDis.getWorksheet("KWIT GLOBAL (2)");
+          const worksheetKwitansiDisGlo3 =
+            workbookKwitansiDis.getWorksheet("KWIT GLOBAL (3)");
 
-          worksheetKwitansiDis2.getCell("B27").value = nama;
-          worksheetKwitansiDis2.getCell("B28").value = "NIP." + NIP;
-          worksheetKwitansiDis2.getCell("N27").value = nama;
-          worksheetKwitansiDis2.getCell("N28").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("G37").value = nama;
+          worksheetKwitansiDisGlo.getCell("G38").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("T37").value = nama;
+          worksheetKwitansiDisGlo.getCell("T38").value = "NIP." + NIP;
 
-          worksheetKwitansiDis3.getCell("B27").value = nama;
-          worksheetKwitansiDis3.getCell("B28").value = "NIP." + NIP;
-          worksheetKwitansiDis3.getCell("N27").value = nama;
-          worksheetKwitansiDis3.getCell("N28").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("G101").value = nama;
+          worksheetKwitansiDisGlo.getCell("G102").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("T101").value = nama;
+          worksheetKwitansiDisGlo.getCell("T102").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo2.getCell("G37").value = nama;
+          worksheetKwitansiDisGlo2.getCell("G38").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo2.getCell("T37").value = nama;
+          worksheetKwitansiDisGlo2.getCell("T38").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo2.getCell("G101").value = nama;
+          worksheetKwitansiDisGlo2.getCell("G102").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo2.getCell("T101").value = nama;
+          worksheetKwitansiDisGlo2.getCell("T102").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo3.getCell("G37").value = nama;
+          worksheetKwitansiDisGlo3.getCell("G38").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo3.getCell("T37").value = nama;
+          worksheetKwitansiDisGlo3.getCell("T38").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo3.getCell("G101").value = nama;
+          worksheetKwitansiDisGlo3.getCell("G102").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo3.getCell("T101").value = nama;
+          worksheetKwitansiDisGlo3.getCell("T102").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo.getCell("AB27").value = nama;
+          worksheetKwitansiDisGlo.getCell("AB28").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("AB91").value = nama;
+          worksheetKwitansiDisGlo.getCell("AB92").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo2.getCell("AB27").value = nama;
+          worksheetKwitansiDisGlo2.getCell("AB28").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo2.getCell("AB91").value = nama;
+          worksheetKwitansiDisGlo2.getCell("AB92").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo3.getCell("AB27").value = nama;
+          worksheetKwitansiDisGlo3.getCell("AB28").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo3.getCell("AB91").value = nama;
+          worksheetKwitansiDisGlo3.getCell("AB92").value = "NIP." + NIP;
 
           return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
         })
@@ -93,34 +124,69 @@ module.exports = {
       workbookKwitansiMon.xlsx
         .readFile(sourceFilePathKwitansiMon)
         .then(() => {
-          const worksheetKwitansiMon =
-            workbookKwitansiMon.getWorksheet("RINCIAN BPD");
-          const worksheetKwitansiMon4 =
-            workbookKwitansiMon.getWorksheet("RINCIAN BPD (4)");
-          const worksheetKwitansiMon2 =
-            workbookKwitansiMon.getWorksheet("RINCIAN BPD (2)");
-          const worksheetKwitansiMon3 =
-            workbookKwitansiMon.getWorksheet("RINCIAN BPD (3)");
+          const worksheetKwitansiMonGlo =
+            workbookKwitansiMon.getWorksheet("KWIT GLOBAL");
+          const worksheetKwitansiMonGlo4 =
+            workbookKwitansiMon.getWorksheet("KWIT GLOBAL (4)");
+          const worksheetKwitansiMonGlo2 =
+            workbookKwitansiMon.getWorksheet("KWIT GLOBAL (2)");
+          const worksheetKwitansiMonGlo3 =
+            workbookKwitansiMon.getWorksheet("KWIT GLOBAL (3)");
 
-          worksheetKwitansiMon.getCell("B27").value = nama;
-          worksheetKwitansiMon.getCell("B28").value = "NIP." + NIP;
-          worksheetKwitansiMon.getCell("N27").value = nama;
-          worksheetKwitansiMon.getCell("N28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo.getCell("G37").value = nama;
+          worksheetKwitansiMonGlo.getCell("G38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo.getCell("T37").value = nama;
+          worksheetKwitansiMonGlo.getCell("T38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo.getCell("G101").value = nama;
+          worksheetKwitansiMonGlo.getCell("G102").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo.getCell("T101").value = nama;
+          worksheetKwitansiMonGlo.getCell("T102").value = "NIP. " + NIP;
 
-          worksheetKwitansiMon2.getCell("B27").value = nama;
-          worksheetKwitansiMon2.getCell("B28").value = "NIP." + NIP;
-          worksheetKwitansiMon2.getCell("N27").value = nama;
-          worksheetKwitansiMon2.getCell("N28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo2.getCell("G37").value = nama;
+          worksheetKwitansiMonGlo2.getCell("G38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo2.getCell("T37").value = nama;
+          worksheetKwitansiMonGlo2.getCell("T38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo2.getCell("G101").value = nama;
+          worksheetKwitansiMonGlo2.getCell("G102").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo2.getCell("T101").value = nama;
+          worksheetKwitansiMonGlo2.getCell("T102").value = "NIP. " + NIP;
 
-          worksheetKwitansiMon3.getCell("B27").value = nama;
-          worksheetKwitansiMon3.getCell("B28").value = "NIP." + NIP;
-          worksheetKwitansiMon3.getCell("N27").value = nama;
-          worksheetKwitansiMon3.getCell("N28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo3.getCell("G37").value = nama;
+          worksheetKwitansiMonGlo3.getCell("G38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo3.getCell("T37").value = nama;
+          worksheetKwitansiMonGlo3.getCell("T38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo3.getCell("G101").value = nama;
+          worksheetKwitansiMonGlo3.getCell("G102").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo3.getCell("T101").value = nama;
+          worksheetKwitansiMonGlo3.getCell("T102").value = "NIP. " + NIP;
 
-          worksheetKwitansiMon4.getCell("B27").value = nama;
-          worksheetKwitansiMon4.getCell("B28").value = "NIP." + NIP;
-          worksheetKwitansiMon4.getCell("N27").value = nama;
-          worksheetKwitansiMon4.getCell("N28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo4.getCell("G37").value = nama;
+          worksheetKwitansiMonGlo4.getCell("G38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo4.getCell("T37").value = nama;
+          worksheetKwitansiMonGlo4.getCell("T38").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo4.getCell("G101").value = nama;
+          worksheetKwitansiMonGlo4.getCell("G102").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo4.getCell("T101").value = nama;
+          worksheetKwitansiMonGlo4.getCell("T102").value = "NIP. " + NIP;
+          worksheetKwitansiMonGlo.getCell("AB27").value = nama;
+          worksheetKwitansiMonGlo.getCell("AB28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo.getCell("AB91").value = nama;
+          worksheetKwitansiMonGlo.getCell("AB92").value = "NIP." + NIP;
+
+          worksheetKwitansiMonGlo2.getCell("AB27").value = nama;
+          worksheetKwitansiMonGlo2.getCell("AB28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo2.getCell("AB91").value = nama;
+          worksheetKwitansiMonGlo2.getCell("AB92").value = "NIP." + NIP;
+
+          worksheetKwitansiMonGlo3.getCell("AB27").value = nama;
+          worksheetKwitansiMonGlo3.getCell("AB28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo3.getCell("AB91").value = nama;
+          worksheetKwitansiMonGlo3.getCell("AB92").value = "NIP." + NIP;
+
+          worksheetKwitansiMonGlo4.getCell("AB27").value = nama;
+          worksheetKwitansiMonGlo4.getCell("AB28").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo4.getCell("AB91").value = nama;
+          worksheetKwitansiMonGlo4.getCell("AB92").value = "NIP." + NIP;
 
           return workbookKwitansiMon.xlsx.writeFile(sourceFilePathKwitansiMon);
         })
@@ -196,15 +262,30 @@ module.exports = {
           worksheetKwitansiDis.getCell("N28").value = nama;
           worksheetKwitansiDis.getCell("N29").value = "NIP." + NIP;
 
+          worksheetKwitansiDis.getCell("A92").value = nama;
+          worksheetKwitansiDis.getCell("A93").value = "NIP." + NIP;
+          worksheetKwitansiDis.getCell("N92").value = nama;
+          worksheetKwitansiDis.getCell("N93").value = "NIP." + NIP;
+
           worksheetKwitansiDis2.getCell("A28").value = nama;
           worksheetKwitansiDis2.getCell("A29").value = "NIP." + NIP;
           worksheetKwitansiDis2.getCell("N28").value = nama;
           worksheetKwitansiDis2.getCell("N29").value = "NIP." + NIP;
 
+          worksheetKwitansiDis2.getCell("A92").value = nama;
+          worksheetKwitansiDis2.getCell("A93").value = "NIP." + NIP;
+          worksheetKwitansiDis2.getCell("N92").value = nama;
+          worksheetKwitansiDis2.getCell("N93").value = "NIP." + NIP;
+
           worksheetKwitansiDis3.getCell("A28").value = nama;
           worksheetKwitansiDis3.getCell("A29").value = "NIP." + NIP;
           worksheetKwitansiDis3.getCell("N28").value = nama;
           worksheetKwitansiDis3.getCell("N29").value = "NIP." + NIP;
+
+          worksheetKwitansiDis3.getCell("A92").value = nama;
+          worksheetKwitansiDis3.getCell("A93").value = "NIP." + NIP;
+          worksheetKwitansiDis3.getCell("N92").value = nama;
+          worksheetKwitansiDis3.getCell("N93").value = "NIP." + NIP;
 
           return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
         })
@@ -230,25 +311,65 @@ module.exports = {
           const worksheetKwitansiMon4 =
             workbookKwitansiMon.getWorksheet("KWIT GLOBAL (4)");
 
+          worksheetKwitansiMon.getCell("AN33").value = nama;
+          worksheetKwitansiMon.getCell("AN34").value = "NIP." + NIP;
+          worksheetKwitansiMon.getCell("AN97").value = nama;
+          worksheetKwitansiMon.getCell("AN98").value = "NIP." + NIP;
+
+          worksheetKwitansiMon2.getCell("AN33").value = nama;
+          worksheetKwitansiMon2.getCell("AN34").value = "NIP." + NIP;
+          worksheetKwitansiMon2.getCell("AN97").value = nama;
+          worksheetKwitansiMon2.getCell("AN98").value = "NIP." + NIP;
+
+          worksheetKwitansiMon3.getCell("AN33").value = nama;
+          worksheetKwitansiMon3.getCell("AN34").value = "NIP." + NIP;
+          worksheetKwitansiMon3.getCell("AN97").value = nama;
+          worksheetKwitansiMon3.getCell("AN98").value = "NIP." + NIP;
+
+          worksheetKwitansiMon4.getCell("AN33").value = nama;
+          worksheetKwitansiMon4.getCell("AN34").value = "NIP." + NIP;
+          worksheetKwitansiMon4.getCell("AN97").value = nama;
+          worksheetKwitansiMon4.getCell("AN98").value = "NIP." + NIP;
+
           worksheetKwitansiMon.getCell("A28").value = nama;
           worksheetKwitansiMon.getCell("A29").value = "NIP." + NIP;
           worksheetKwitansiMon.getCell("N28").value = nama;
           worksheetKwitansiMon.getCell("N29").value = "NIP." + NIP;
+
+          worksheetKwitansiMon.getCell("A92").value = nama;
+          worksheetKwitansiMon.getCell("A93").value = "NIP." + NIP;
+          worksheetKwitansiMon.getCell("N92").value = nama;
+          worksheetKwitansiMon.getCell("N93").value = "NIP." + NIP;
 
           worksheetKwitansiMon2.getCell("A28").value = nama;
           worksheetKwitansiMon2.getCell("A29").value = "NIP." + NIP;
           worksheetKwitansiMon2.getCell("N28").value = nama;
           worksheetKwitansiMon2.getCell("N29").value = "NIP." + NIP;
 
+          worksheetKwitansiMon2.getCell("A92").value = nama;
+          worksheetKwitansiMon2.getCell("A93").value = "NIP." + NIP;
+          worksheetKwitansiMon2.getCell("N92").value = nama;
+          worksheetKwitansiMon2.getCell("N93").value = "NIP." + NIP;
+
           worksheetKwitansiMon3.getCell("A28").value = nama;
           worksheetKwitansiMon3.getCell("A29").value = "NIP." + NIP;
           worksheetKwitansiMon3.getCell("N28").value = nama;
           worksheetKwitansiMon3.getCell("N29").value = "NIP." + NIP;
 
+          worksheetKwitansiMon3.getCell("A92").value = nama;
+          worksheetKwitansiMon3.getCell("A93").value = "NIP." + NIP;
+          worksheetKwitansiMon3.getCell("N92").value = nama;
+          worksheetKwitansiMon3.getCell("N93").value = "NIP." + NIP;
+
           worksheetKwitansiMon4.getCell("A28").value = nama;
           worksheetKwitansiMon4.getCell("A29").value = "NIP." + NIP;
           worksheetKwitansiMon4.getCell("N28").value = nama;
           worksheetKwitansiMon4.getCell("N29").value = "NIP." + NIP;
+
+          worksheetKwitansiMon4.getCell("A92").value = nama;
+          worksheetKwitansiMon4.getCell("A93").value = "NIP." + NIP;
+          worksheetKwitansiMon4.getCell("N92").value = nama;
+          worksheetKwitansiMon4.getCell("N93").value = "NIP." + NIP;
 
           return workbookKwitansiMon.xlsx.writeFile(sourceFilePathKwitansiMon);
         })
@@ -344,13 +465,6 @@ module.exports = {
       workbookKwitansiDis.xlsx
         .readFile(sourceFilePathKwitansiDis)
         .then(() => {
-          const worksheetKwitansiDis =
-            workbookKwitansiDis.getWorksheet("RINCIAN BPD");
-          const worksheetKwitansiDis2 =
-            workbookKwitansiDis.getWorksheet("RINCIAN BPD (2)");
-          const worksheetKwitansiDis3 =
-            workbookKwitansiDis.getWorksheet("RINCIAN BPD (3)");
-
           const worksheetKwitansiDisGlo =
             workbookKwitansiDis.getWorksheet("KWIT GLOBAL");
           const worksheetKwitansiDisGlo2 =
@@ -358,35 +472,50 @@ module.exports = {
           const worksheetKwitansiDisGlo3 =
             workbookKwitansiDis.getWorksheet("KWIT GLOBAL (3)");
 
-          worksheetKwitansiDis.getCell("A39").value = nama;
-          worksheetKwitansiDis.getCell("A40").value = "NIP." + NIP;
-          worksheetKwitansiDis.getCell("M39").value = nama;
-          worksheetKwitansiDis.getCell("M40").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("AA39").value = nama;
+          worksheetKwitansiDisGlo.getCell("AA40").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("AA103").value = nama;
+          worksheetKwitansiDisGlo.getCell("AA104").value = "NIP." + NIP;
 
-          worksheetKwitansiDis2.getCell("A39").value = nama;
-          worksheetKwitansiDis2.getCell("A40").value = "NIP." + NIP;
-          worksheetKwitansiDis2.getCell("M39").value = nama;
-          worksheetKwitansiDis2.getCell("M40").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo2.getCell("AA39").value = nama;
+          worksheetKwitansiDisGlo2.getCell("AA40").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo2.getCell("AA103").value = nama;
+          worksheetKwitansiDisGlo2.getCell("AA104").value = "NIP." + NIP;
 
-          worksheetKwitansiDis3.getCell("A39").value = nama;
-          worksheetKwitansiDis3.getCell("A40").value = "NIP." + NIP;
-          worksheetKwitansiDis3.getCell("M39").value = nama;
-          worksheetKwitansiDis3.getCell("M40").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo3.getCell("AA39").value = nama;
+          worksheetKwitansiDisGlo3.getCell("AA40").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo3.getCell("AA103").value = nama;
+          worksheetKwitansiDisGlo3.getCell("AA104").value = "NIP." + NIP;
 
           worksheetKwitansiDisGlo.getCell("A37").value = nama;
           worksheetKwitansiDisGlo.getCell("A38").value = "NIP." + NIP;
           worksheetKwitansiDisGlo.getCell("N37").value = nama;
           worksheetKwitansiDisGlo.getCell("N38").value = "NIP." + NIP;
 
+          worksheetKwitansiDisGlo.getCell("A101").value = nama;
+          worksheetKwitansiDisGlo.getCell("A102").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo.getCell("N101").value = nama;
+          worksheetKwitansiDisGlo.getCell("N102").value = "NIP." + NIP;
+
           worksheetKwitansiDisGlo2.getCell("A37").value = nama;
           worksheetKwitansiDisGlo2.getCell("A38").value = "NIP." + NIP;
           worksheetKwitansiDisGlo2.getCell("N37").value = nama;
           worksheetKwitansiDisGlo2.getCell("N38").value = "NIP." + NIP;
 
+          worksheetKwitansiDisGlo2.getCell("A101").value = nama;
+          worksheetKwitansiDisGlo2.getCell("A102").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo2.getCell("N101").value = nama;
+          worksheetKwitansiDisGlo2.getCell("N102").value = "NIP." + NIP;
+
           worksheetKwitansiDisGlo3.getCell("A37").value = nama;
           worksheetKwitansiDisGlo3.getCell("A38").value = "NIP." + NIP;
           worksheetKwitansiDisGlo3.getCell("N37").value = nama;
           worksheetKwitansiDisGlo3.getCell("N38").value = "NIP." + NIP;
+
+          worksheetKwitansiDisGlo3.getCell("A101").value = nama;
+          worksheetKwitansiDisGlo3.getCell("A102").value = "NIP." + NIP;
+          worksheetKwitansiDisGlo3.getCell("N101").value = nama;
+          worksheetKwitansiDisGlo3.getCell("N102").value = "NIP." + NIP;
 
           return workbookKwitansiDis.xlsx.writeFile(sourceFilePathKwitansiDis);
         })
@@ -418,45 +547,65 @@ module.exports = {
           const worksheetKwitansiMonGlo4 =
             workbookKwitansiMon.getWorksheet("KWIT GLOBAL (4)");
 
-          worksheetKwitansiMon.getCell("A39").value = nama;
-          worksheetKwitansiMon.getCell("A40").value = "NIP." + NIP;
-          worksheetKwitansiMon.getCell("M39").value = nama;
-          worksheetKwitansiMon.getCell("M40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo.getCell("AA39").value = nama;
+          worksheetKwitansiMonGlo.getCell("AA40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo.getCell("AA103").value = nama;
+          worksheetKwitansiMonGlo.getCell("AA104").value = "NIP." + NIP;
 
-          worksheetKwitansiMon2.getCell("A39").value = nama;
-          worksheetKwitansiMon2.getCell("A40").value = "NIP." + NIP;
-          worksheetKwitansiMon2.getCell("M39").value = nama;
-          worksheetKwitansiMon2.getCell("M40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo2.getCell("AA39").value = nama;
+          worksheetKwitansiMonGlo2.getCell("AA40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo2.getCell("AA103").value = nama;
+          worksheetKwitansiMonGlo2.getCell("AA104").value = "NIP." + NIP;
 
-          worksheetKwitansiMon3.getCell("A39").value = nama;
-          worksheetKwitansiMon3.getCell("A40").value = "NIP." + NIP;
-          worksheetKwitansiMon3.getCell("M39").value = nama;
-          worksheetKwitansiMon3.getCell("M40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo3.getCell("AA39").value = nama;
+          worksheetKwitansiMonGlo3.getCell("AA40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo3.getCell("AA103").value = nama;
+          worksheetKwitansiMonGlo3.getCell("AA104").value = "NIP." + NIP;
 
-          worksheetKwitansiMon4.getCell("A39").value = nama;
-          worksheetKwitansiMon4.getCell("A40").value = "NIP." + NIP;
-          worksheetKwitansiMon4.getCell("M39").value = nama;
-          worksheetKwitansiMon4.getCell("M40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo4.getCell("AA39").value = nama;
+          worksheetKwitansiMonGlo4.getCell("AA40").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo4.getCell("AA103").value = nama;
+          worksheetKwitansiMonGlo4.getCell("AA104").value = "NIP." + NIP;
 
           worksheetKwitansiMonGlo.getCell("A37").value = nama;
           worksheetKwitansiMonGlo.getCell("A38").value = "NIP." + NIP;
           worksheetKwitansiMonGlo.getCell("N37").value = nama;
           worksheetKwitansiMonGlo.getCell("N38").value = "NIP." + NIP;
 
+          worksheetKwitansiMonGlo.getCell("A101").value = nama;
+          worksheetKwitansiMonGlo.getCell("A102").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo.getCell("N101").value = nama;
+          worksheetKwitansiMonGlo.getCell("N102").value = "NIP." + NIP;
+
           worksheetKwitansiMonGlo2.getCell("A37").value = nama;
           worksheetKwitansiMonGlo2.getCell("A38").value = "NIP." + NIP;
           worksheetKwitansiMonGlo2.getCell("N37").value = nama;
           worksheetKwitansiMonGlo2.getCell("N38").value = "NIP." + NIP;
+
+          worksheetKwitansiMonGlo2.getCell("A101").value = nama;
+          worksheetKwitansiMonGlo2.getCell("A102").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo2.getCell("N101").value = nama;
+          worksheetKwitansiMonGlo2.getCell("N102").value = "NIP." + NIP;
 
           worksheetKwitansiMonGlo3.getCell("A37").value = nama;
           worksheetKwitansiMonGlo3.getCell("A38").value = "NIP." + NIP;
           worksheetKwitansiMonGlo3.getCell("N37").value = nama;
           worksheetKwitansiMonGlo3.getCell("N38").value = "NIP." + NIP;
 
+          worksheetKwitansiMonGlo3.getCell("A101").value = nama;
+          worksheetKwitansiMonGlo3.getCell("A102").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo3.getCell("N101").value = nama;
+          worksheetKwitansiMonGlo3.getCell("N102").value = "NIP." + NIP;
+
           worksheetKwitansiMonGlo4.getCell("A37").value = nama;
           worksheetKwitansiMonGlo4.getCell("A38").value = "NIP." + NIP;
           worksheetKwitansiMonGlo4.getCell("N37").value = nama;
           worksheetKwitansiMonGlo4.getCell("N38").value = "NIP." + NIP;
+
+          worksheetKwitansiMonGlo4.getCell("A101").value = nama;
+          worksheetKwitansiMonGlo4.getCell("A102").value = "NIP." + NIP;
+          worksheetKwitansiMonGlo4.getCell("N101").value = nama;
+          worksheetKwitansiMonGlo4.getCell("N102").value = "NIP." + NIP;
 
           return workbookKwitansiMon.xlsx.writeFile(sourceFilePathKwitansiMon);
         })
@@ -506,6 +655,7 @@ module.exports = {
 
           worksheetDistribusiSPD1.getCell("E40").value = nama;
           worksheetDistribusiSPD1.getCell("E41").value = "NIP." + NIP;
+
           worksheetDistribusiSPD1.getCell("P40").value = nama;
           worksheetDistribusiSPD1.getCell("P41").value = "NIP." + NIP;
 
